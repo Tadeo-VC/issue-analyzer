@@ -20,4 +20,9 @@ class Chat {
     this.messages.push(message);
     return message;
   }
+
+  async sendMessage(message: Message): Promise<void> {
+    const response = await this.agent.receiveMessage(message);
+    message.receiveResponse(response);
+  }
 }

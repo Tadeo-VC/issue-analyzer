@@ -1,5 +1,5 @@
 import { UndefinedToolException } from "./errors";
-import type { ClientLLM } from "./llm";
+import type { ClientLLM } from "./llm/ClientLLM";
 import type { Message } from "./message";
 import type { Tool } from "./tool";
 
@@ -13,7 +13,8 @@ export class Agent {
   }
 
   async receiveMessage(message: Message): Promise<string> {
-    return this.llm.generateResponse(message);
+    const result = await this.llm.generateResponse(message);
+    return result.getResponse(this);
   }
 
   async callTool(toolName: string, args: unknown): Promise<string> {

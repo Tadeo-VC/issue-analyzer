@@ -9,12 +9,8 @@ export class Message {
     this.request = request;
   }
 
-  async sendMessage(agent: Agent){
+  async sendMessage(agent: Agent) {
     this.response = await agent.receiveMessage(this);
-  }
-
-  receiveResponse(response: string){
-    this.response = response;
     this.responseState = ResponseState.SUCCESS;
   }
 }

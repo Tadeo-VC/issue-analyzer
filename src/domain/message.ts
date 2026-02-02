@@ -1,4 +1,6 @@
-class Message {
+import { Agent } from "./agent";
+
+export class Message {
   private request: string;
   private response?: string;
   private responseState: ResponseState = ResponseState.IDLE;

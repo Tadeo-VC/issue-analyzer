@@ -1,3 +1,7 @@
+import { Message } from "./message";
+import { User } from "./user";
+import { Agent } from "./agent";
+
 class Chat {
   private title: string;
   private messages: Message[];

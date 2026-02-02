@@ -1,11 +1,11 @@
 import { describe, it, expect, vi } from "vitest";
-import { Agent } from "@/src/domain/agent";
+import { Agent } from "@/src/domain/Agent";
 import type { ClientLLM } from "@/src/domain/llm/ClientLLM";
-import type { Message } from "@/src/domain/message";
+import type { Message } from "@/src/domain/Message";
 import type { GenerateResult } from "@/src/domain/llm/GenerateResult";
 import { ResponseResult, ToolCallResult } from "@/src/domain/llm/GenerateResult";
-import type { Tool } from "@/src/domain/tool";
-import { UndefinedToolException } from "@/src/domain/errors";
+import type { Tool } from "@/src/domain/Tool";
+import { UndefinedToolException } from "@/src/domain/Errors";
 
 describe("Agent", () => {
   const createMockMessage = (request = "hello"): Message =>

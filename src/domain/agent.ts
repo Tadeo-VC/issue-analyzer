@@ -1,7 +1,7 @@
-import { UndefinedToolException } from "./errors";
+import { UndefinedToolException } from "./Errors";
 import type { ClientLLM } from "./llm/ClientLLM";
-import type { Message } from "./message";
-import type { Tool } from "./tool";
+import type { Message } from "./Message";
+import type { Tool } from "./Tool";
 
 export class Agent {
   private readonly llm: ClientLLM;

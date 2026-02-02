@@ -1,4 +1,4 @@
-import { Agent } from "../agent";
+import { Agent } from "../Agent";
 
 export interface GenerateResult {
   getResponse(runner: Agent): Promise<string>;

@@ -138,6 +138,7 @@ export abstract class ClientLLM {
 enum Intention {
   ANALYZE_ISSUES_PRIORITY = "analyze_issues_priority",
   ANALYZE_COMPLEXITY = "analyze_complexity",
+  FIND_REPO = "find_repo",
   LOGIN_GITHUB = "login_github",
   GENERAL_CHAT = "general_chat"
 }

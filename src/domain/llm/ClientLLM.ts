@@ -1,5 +1,6 @@
 import { Chat } from "../Chat"
 import { GenerateResult, ToolCallResult, ResponseResult } from "./GenerateResult";
+import { FindIntentionResult, Intention, LLMMessage, LLMRole } from "./LLMMessage";
 import { SystemPrompt } from "./Prompt";
 
 export abstract class ClientLLM {
@@ -76,10 +77,7 @@ export abstract class ClientLLM {
     const naturalLanguageResponse = await this.sendRequest(
       this.buildPrompt(SystemPrompt.EXPLAIN_RESULTS),
       [
-        {
-          role: LLMRole.TOOL,
-          content: JSON.stringify(toolResult)
-        }
+        new LLMMessage(LLMRole.TOOL,JSON.stringify(toolResult))
       ].concat(this.buildChatHistory(chat)),
       this.buildLastMessage(chat)
     );
@@ -103,17 +101,11 @@ export abstract class ClientLLM {
   
     for (let i = 0; i < maxLength; i++) {
       if (i < userMessages.length) {
-        history.push({
-          role: LLMRole.USER,
-          content: userMessages[i]
-        });
+        history.push(new LLMMessage(LLMRole.USER, userMessages[i]));
       }
   
       if (i < assistantMessages.length) {
-        history.push({
-          role: LLMRole.ASSISTANT,
-          content: assistantMessages[i]
-        });
+        history.push(new LLMMessage(LLMRole.ASSISTANT, assistantMessages[i]));
       }
     }
   
@@ -121,41 +113,10 @@ export abstract class ClientLLM {
   }
 
   private buildLastMessage(chat: Chat): LLMMessage {
-    return {
-      role: LLMRole.USER,
-      content: chat.userInput()
-    }
+    return new LLMMessage(LLMRole.USER, chat.userInput())
   }
 
   private buildPrompt(prompt: SystemPrompt): LLMMessage {
-    return {
-      role: LLMRole.SYSTEM,
-      content: prompt
-    }
+    return new LLMMessage(LLMRole.SYSTEM, prompt)
   }
-}
-
-enum Intention {
-  ANALYZE_ISSUES_PRIORITY = "analyze_issues_priority",
-  ANALYZE_COMPLEXITY = "analyze_complexity",
-  FIND_REPO = "find_repo",
-  LOGIN_GITHUB = "login_github",
-  GENERAL_CHAT = "general_chat"
-}
-
-export enum LLMRole {
-  SYSTEM = "system",
-  USER = "user",
-  ASSISTANT = "assistant",
-  TOOL = "tool"
-}
-
-interface FindIntentionResult {
-  intention: Intention;
-  args?: Record<string, unknown>;
-}
-
-export interface LLMMessage {
-  role: LLMRole;
-  content: string;
 }

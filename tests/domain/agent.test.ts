@@ -6,6 +6,7 @@ import type { GenerateResult } from "@/src/domain/llm/GenerateResult";
 import { ResponseResult, ToolCallResult } from "@/src/domain/llm/GenerateResult";
 import type { Tool } from "@/src/domain/Tool";
 import { UndefinedToolException } from "@/src/domain/Errors";
+import { sendResponse } from "next/dist/server/image-optimizer";
 
 describe("Agent", () => {
   const createMockMessage = (request = "hello"): Message =>
@@ -18,8 +19,9 @@ describe("Agent", () => {
 
   const createMockLLM = (result: GenerateResult): ClientLLM => ({
     generateResponse: vi.fn().mockResolvedValue(result),
-    receiveToolResponse: vi.fn(),
-  });
+    generateToolResponse: vi.fn(),
+    sendRequest: vi.fn()
+  } as unknown as ClientLLM); 
   
   it("receiveMessage returns the text when the LLM returns ResponseResult", async () => {
     const text = "Hello, I am the assistant.";

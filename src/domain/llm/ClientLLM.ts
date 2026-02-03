@@ -3,11 +3,13 @@ import { GenerateResult, ToolCallResult, ResponseResult } from "./GenerateResult
 import { SystemPrompt } from "./Prompt";
 
 export abstract class ClientLLM {
+
   async generateResponse(chat: Chat): Promise<GenerateResult> {
 
     const responseText: string = await this.sendRequest(
-      SystemPrompt.FIND_INTENTION,
-      this.buildChatHistory(chat)
+      this.buildPrompt(SystemPrompt.FIND_INTENTION),
+      this.buildChatHistory(chat),
+      this.buildLastMessage(chat)
     );
 
     // catching typing and parsing errors
@@ -40,6 +42,13 @@ export abstract class ClientLLM {
           intentionResult.args,
           chat
         );
+
+      case Intention.FIND_REPO:
+        return new ToolCallResult(
+          "findRepo",
+          intentionResult.args,
+          chat
+        );  
   
       case Intention.LOGIN_GITHUB:
         return new ToolCallResult(
@@ -50,8 +59,9 @@ export abstract class ClientLLM {
   
       case Intention.GENERAL_CHAT: {
         const naturalLanguageResponse = await this.sendRequest(
-          SystemPrompt.GENERAL_CHAT,
-          this.buildChatHistory(chat)
+          this.buildPrompt(SystemPrompt.GENERAL_CHAT),
+          this.buildChatHistory(chat),
+          this.buildLastMessage(chat)
         );
   
         return new ResponseResult(naturalLanguageResponse);
@@ -64,21 +74,23 @@ export abstract class ClientLLM {
   
   async generateToolResponse(toolResult: unknown, chat: Chat): Promise<ResponseResult> {
     const naturalLanguageResponse = await this.sendRequest(
-      SystemPrompt.EXPLAIN_RESULTS,
+      this.buildPrompt(SystemPrompt.EXPLAIN_RESULTS),
       [
         {
           role: LLMRole.TOOL,
           content: JSON.stringify(toolResult)
         }
-      ].concat(this.buildChatHistory(chat))
+      ].concat(this.buildChatHistory(chat)),
+      this.buildLastMessage(chat)
     );
   
     return new ResponseResult(naturalLanguageResponse);
   }
 
   abstract sendRequest(
-    systemPrompt: string,
-    messages: LLMMessage[]
+    systemPrompt: LLMMessage,
+    messages: LLMMessage[],
+    userInput: LLMMessage
   ): Promise<string>
 
   private buildChatHistory(chat: Chat): LLMMessage[] {
@@ -106,6 +118,20 @@ export abstract class ClientLLM {
     }
   
     return history;
+  }
+
+  private buildLastMessage(chat: Chat): LLMMessage {
+    return {
+      role: LLMRole.USER,
+      content: chat.userInput()
+    }
+  }
+
+  private buildPrompt(prompt: SystemPrompt): LLMMessage {
+    return {
+      role: LLMRole.SYSTEM,
+      content: prompt
+    }
   }
 }
 

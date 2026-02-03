@@ -25,6 +25,10 @@ export class Chat {
     const response = await this.agent.receiveMessage(chat);
   }
 
+  userInput(): string {
+    return this.messages[this.messages.length - 1].getRequest()
+  }
+
   lastUserMessages(): string[] {
     return this.lastTenMessages(this.messages).map(m => m.getRequest());
   }

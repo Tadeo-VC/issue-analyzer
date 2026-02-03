@@ -11,4 +11,17 @@ export class Message {
     this.response = response;
     this.responseState = ResponseState.SUCCESS;
   }
+
+  getResponse(): string {
+
+    if(!this.response){
+      throw new Error("The message has no response");
+    }
+
+    return this.response;
+  }
+
+  getRequest(): string {
+    return this.request
+  }
 }

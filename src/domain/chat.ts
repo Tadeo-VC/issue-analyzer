@@ -1,8 +1,8 @@
 import { Message } from "./Message";
-import { User } from "./user";
+import { User } from "./User";
 import { Agent } from "./Agent";
 
-class Chat {
+export class Chat {
   private title: string;
   private messages: Message[];
   private user: User;
@@ -21,8 +21,15 @@ class Chat {
     return message;
   }
 
-  async sendMessage(message: Message): Promise<void> {
-    const response = await this.agent.receiveMessage(message);
-    message.receiveResponse(response);
+  async sendMessage(chat: Chat): Promise<void> {
+    const response = await this.agent.receiveMessage(chat);
   }
+
+  lastUserMessages(): string[] {
+    return this.messages.slice(-10).map(m => m.getRequest());
+  }
+  
+  lastAssistantMessages(): string[] {
+    return this.messages.slice(-10).map(m => m.getResponse());
+  }  
 }

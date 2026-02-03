@@ -26,10 +26,14 @@ export class Chat {
   }
 
   lastUserMessages(): string[] {
-    return this.messages.slice(-10).map(m => m.getRequest());
+    return this.lastTenMessages(this.messages).map(m => m.getRequest());
   }
   
   lastAssistantMessages(): string[] {
-    return this.messages.slice(-10).map(m => m.getResponse());
+    return this.lastTenMessages(this.messages).map(m => m.getResponse());
   }  
+
+  private lastTenMessages(messages: Message[]): Message[] {
+    return this.messages.slice(-11,-1);
+  }
 }

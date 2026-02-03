@@ -1,4 +1,5 @@
 import { Agent } from "../Agent";
+import { Chat } from "../Chat";
 
 export interface GenerateResult {
   getResponse(runner: Agent): Promise<string>;
@@ -14,9 +15,10 @@ export class ResponseResult implements GenerateResult {
 export class ToolCallResult implements GenerateResult {
   constructor(
     private readonly toolName: string,
-    private readonly args: unknown
+    private readonly args: unknown,
+    private readonly chat: Chat
   ) {}
   async getResponse(runner: Agent): Promise<string> {
-    return runner.callTool(this.toolName, this.args);
+    return runner.callTool(this.toolName, this.args, this.chat);
   }
 }

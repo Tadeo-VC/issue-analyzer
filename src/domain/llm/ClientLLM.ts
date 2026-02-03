@@ -30,19 +30,22 @@ export abstract class ClientLLM {
       case Intention.ANALYZE_ISSUES_PRIORITY:
         return new ToolCallResult(
           "analyzeIssuesPriority",
-          intentionResult.args
+          intentionResult.args,
+          chat
         );
   
       case Intention.ANALYZE_COMPLEXITY:
         return new ToolCallResult(
           "analyzeComplexity",
-          intentionResult.args
+          intentionResult.args,
+          chat
         );
   
       case Intention.LOGIN_GITHUB:
         return new ToolCallResult(
           "loginGithub",
-          intentionResult.args
+          intentionResult.args,
+          chat
         );
   
       case Intention.GENERAL_CHAT: {
@@ -59,7 +62,7 @@ export abstract class ClientLLM {
     }
   }
   
-  async generateToolResponse(chat: Chat,toolResult: unknown): Promise<ResponseResult> {
+  async generateToolResponse(toolResult: unknown, chat: Chat): Promise<ResponseResult> {
     const naturalLanguageResponse = await this.sendRequest(
       SystemPrompt.EXPLAIN_RESULTS,
       [

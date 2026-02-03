@@ -1,6 +1,6 @@
+import { Chat } from "./Chat";
 import { UndefinedToolException } from "./Errors";
 import type { ClientLLM } from "./llm/ClientLLM";
-import type { Message } from "./Message";
 import type { Tool } from "./Tool";
 
 export class Agent {
@@ -12,16 +12,16 @@ export class Agent {
     this.tools = new Map(tools.map((t) => [t.name, t]));
   }
 
-  async receiveMessage(message: Message): Promise<string> {
-    const result = await this.llm.generateResponse(message);
+  async receiveMessage(chat: Chat): Promise<string> {
+    const result = await this.llm.generateResponse(chat);
     return result.getResponse(this);
   }
 
-  async callTool(toolName: string, args: unknown): Promise<string> {
+  async callTool(toolName: string, args: unknown, chat: Chat): Promise<string> {
     const tool = this.tools.get(toolName);
     if (!tool) throw new UndefinedToolException(toolName);
     const result = await tool.call(args);
-    this.llm.receiveToolResponse?.(result);
+    this.llm.generateToolResponse?.(result, chat);
     return result;
   }
 

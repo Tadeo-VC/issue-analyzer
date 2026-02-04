@@ -77,7 +77,7 @@ export abstract class ClientLLM {
     const naturalLanguageResponse = await this.sendRequest(
       this.buildPrompt(SystemPrompt.EXPLAIN_RESULTS),
       [
-        new LLMMessage(LLMRole.TOOL,JSON.stringify(toolResult))
+        new LLMMessage(LLMRole.ASSISTANT,JSON.stringify(toolResult))
       ].concat(this.buildChatHistory(chat)),
       this.buildLastMessage(chat)
     );

@@ -3,7 +3,7 @@ import { Agent } from "@/src/domain/Agent";
 import type { ClientLLM } from "@/src/domain/llm/ClientLLM";
 import type { GenerateResult } from "@/src/domain/llm/GenerateResult";
 import { ResponseResult, ToolCallResult } from "@/src/domain/llm/GenerateResult";
-import type { Tool } from "@/src/domain/Tool";
+import type { Tool } from "@/src/domain/tool/Tool";
 import { UndefinedToolException } from "@/src/domain/Errors";
 import { Chat } from "@/src/domain/Chat";
 import { IntentData } from "@/src/domain/llm/IntentData";
@@ -74,7 +74,7 @@ describe("Agent", () => {
   it("getToolNames returns the names of the registered tools", () => {
     const tool1 = { name: "search", call: vi.fn() } as unknown as Tool;
     const tool2 = { name: "fetch", call: vi.fn() } as unknown as Tool;
-    const agent = new Agent({ generateResponse: vi.fn() } as ClientLLM, [
+    const agent = new Agent({ generateResponse: vi.fn() } as unknown as ClientLLM, [
       tool1,
       tool2,
     ]);

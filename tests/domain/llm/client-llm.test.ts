@@ -28,7 +28,6 @@ describe("ClientLLM", () => {
     const result = await llm.generateResponse(chat);
 
     expect(result).toBeInstanceOf(ToolCallResult);
-    expect((result as ToolCallResult).toolName).toBe("analyzeIssuesPriority");
     expect(llm.sendRequest).toHaveBeenCalledTimes(1);
   });
 

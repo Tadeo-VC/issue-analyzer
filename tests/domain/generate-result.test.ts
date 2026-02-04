@@ -12,7 +12,7 @@ describe("GenerateResult", () => {
         args: { message: "Hello world" }
       };
       const result = new ResponseResult(intentData);
-      expect(await result.getResponse({} as Agent)).toBe("Hello world");
+      expect(await result.getResponse()).toBe("Hello world");
     });
   });
 

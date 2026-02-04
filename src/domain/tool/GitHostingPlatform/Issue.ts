@@ -21,6 +21,14 @@ export class Issue {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+
+    getTitle(): string {
+        return this.title;
+    }
+
+    getBody(): string | undefined {
+        return this.body;
+    }
 }
 
 export class Label {

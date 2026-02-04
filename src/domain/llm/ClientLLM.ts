@@ -1,60 +1,44 @@
 import { Chat } from "../Chat"
 import { GenerateResult, ToolCallResult, ResponseResult } from "./GenerateResult";
-import { FindIntentionResult, Intention, LLMMessage, LLMRole } from "./LLMMessage";
+import { intentData, Intention, LLMMessage, LLMRole } from "./LLMMessage";
 import { SystemPrompt } from "./Prompt";
 
 export abstract class ClientLLM {
 
   async generateResponse(chat: Chat): Promise<GenerateResult> {
 
-    const responseText: string = await this.sendRequest(
+    const responseText: intentData = await this.sendRequest(
       this.buildPrompt(SystemPrompt.FIND_INTENTION),
       this.buildChatHistory(chat),
       this.buildLastMessage(chat)
     );
-
-    // catching typing and parsing errors
-    let intentionResult: FindIntentionResult;
-
-    try {
-      intentionResult = JSON.parse(responseText) as FindIntentionResult;
-    } catch (e) {
-      throw new SyntaxError(`Failed to parse LLM response as JSON: ${e}`);
-    }
-    
-    if (!intentionResult.intention) {
-      throw new Error(
-        `Parsed JSON is missing required field 'intention': ${JSON.stringify(intentionResult)}`
-      );
-    }
-    //
   
-    switch (intentionResult.intention) {
+    switch (responseText.intention) {
       case Intention.ANALYZE_ISSUES_PRIORITY:
         return new ToolCallResult(
           "analyzeIssuesPriority",
-          intentionResult.args,
+          responseText.args,
           chat
         );
   
       case Intention.ANALYZE_COMPLEXITY:
         return new ToolCallResult(
           "analyzeComplexity",
-          intentionResult.args,
+          responseText.args,
           chat
         );
 
       case Intention.FIND_REPO:
         return new ToolCallResult(
           "findRepo",
-          intentionResult.args,
+          responseText.args,
           chat
         );  
   
       case Intention.LOGIN_GITHUB:
         return new ToolCallResult(
           "loginGithub",
-          intentionResult.args,
+          responseText.args,
           chat
         );
   
@@ -69,7 +53,7 @@ export abstract class ClientLLM {
       }
   
       default:
-        throw new Error(`Unsupported intention: ${intentionResult.intention}`);
+        throw new Error(`Unsupported intention: ${responseText.intention}`);
     }
   }
   
@@ -89,7 +73,7 @@ export abstract class ClientLLM {
     systemPrompt: LLMMessage,
     messages: LLMMessage[],
     userInput: LLMMessage
-  ): Promise<string>
+  ): Promise<intentData>
 
   private buildChatHistory(chat: Chat): LLMMessage[] {
     const history: LLMMessage[] = [];

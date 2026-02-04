@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import { ClientLLM } from "./ClientLLM";
-import { LLMMessage, LLMRole } from "./LLMMessage";
+import { intentData, LLMMessage, LLMRole } from "./LLMMessage";
 import { Tool } from "openai/resources/responses/responses.js";
 
 class OpenAILLM extends ClientLLM{
@@ -16,7 +16,7 @@ class OpenAILLM extends ClientLLM{
         this.availableTools = tools
     }
 
-    async sendRequest(systemPrompt: LLMMessage, chatMessages: LLMMessage[], lastMessage: LLMMessage): Promise<string> {
+    async sendRequest(systemPrompt: LLMMessage, chatMessages: LLMMessage[], lastMessage: LLMMessage): Promise<intentData> {
     try {
 
       const apiMessages = [
@@ -36,9 +36,19 @@ class OpenAILLM extends ClientLLM{
    
       const response = await this.client.responses.create(requestBody);
     
-      } catch (error) {
-        console.error('Error en sendRequest:', error);
-        throw new Error(`Failed to send request`);
+      const text = response.output_text?.[0]; 
+
+      let json: intentData;
+      try {
+        json = JSON.parse(text);
+      } catch (e) {
+        throw new Error(`LLM response is not valid JSON: ${text}`);
       }
+
+      return json;
+
+    } catch (error) {
+      throw new Error(`Failed to send request`);
     }
+  }
 }

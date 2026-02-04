@@ -7,16 +7,16 @@ export enum Intention {
     LOGIN_GITHUB = "login_github",
     GENERAL_CHAT = "general_chat"
 }
+      
+export interface intentData {
+    intention: "general_chat" | "analyze_issues_priority" | "analyze_complexity" | "login_github" | "find_repo";
+    args: Record<string, any>;
+  };
 
 export enum LLMRole {
   SYSTEM = "system",
   USER = "user",
   ASSISTANT = "assistant",
-}
-
-export interface FindIntentionResult {
-  intention: Intention;
-  args?: Record<string, unknown>;
 }
 
 export class LLMMessage {

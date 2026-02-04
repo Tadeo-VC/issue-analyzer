@@ -36,7 +36,7 @@ Return ONLY a valid JSON object with this structure:
 
 {
   "intention": "<tool_name_here>",  // e.g., analyze_complexity
-  "args": { "explanation": "<human-readable explanation here>" }
+  "args": { "message": "<human-readable explanation here>" }
 }
 
 Do not expose raw JSON.

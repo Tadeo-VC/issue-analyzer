@@ -1,6 +1,6 @@
 import { Agent } from "../Agent";
 import { Chat } from "../Chat";
-import { intentData } from "./LLMMessage";
+import { IntentData } from "./IntentData";
 
 export interface GenerateResult {
   getResponse(runner: Agent): Promise<string>;
@@ -10,7 +10,7 @@ export class ResponseResult implements GenerateResult {
 
   private readonly text: string
 
-  constructor(json: intentData) {
+  constructor(json: IntentData) {
     this.text = json.args.message as string
   }
   async getResponse(): Promise<string> {

@@ -1,4 +1,4 @@
-import { ResponseState } from "./ResponseState";
+import { ResponseState } from "./responseState";
 
 export class Message {
   private request: string;

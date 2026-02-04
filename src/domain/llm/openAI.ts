@@ -1,8 +1,8 @@
 import OpenAI from "openai";
-import { ClientLLM } from "./ClientLLM";
-import { LLMMessage } from "./LLMMessage";
+import { ClientLLM } from "./clientLLM";
+import { LLMMessage } from "./llmMessage";
 import { Tool } from "openai/resources/responses/responses.js";
-import { IntentData, IntentDataSchema } from "./IntentData";
+import { IntentData, IntentDataSchema } from "./intentData";
 
 export class OpenAILLM extends ClientLLM{
     

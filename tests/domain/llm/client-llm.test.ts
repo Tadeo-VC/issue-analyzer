@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from "vitest";
-import { ClientLLM } from "@/src/domain/llm/ClientLLM";
-import { Chat } from "@/src/domain/Chat";
-import { ResponseResult, ToolCallResult } from "@/src/domain/llm/GenerateResult";
-import { Intention } from "@/src/domain/llm/LLMMessage";
-import { IntentData } from "@/src/domain/llm/IntentData";
+import { ClientLLM } from "@/src/domain/llm/clientLLM";
+import { Chat } from "@/src/domain/chat";
+import { ResponseResult, ToolCallResult } from "@/src/domain/llm/generateResult";
+import { Intention } from "@/src/domain/llm/llmMessage";
+import { IntentData } from "@/src/domain/llm/intentData";
 
 class TestClientLLM extends ClientLLM {
   sendRequest = vi.fn();

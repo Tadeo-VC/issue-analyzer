@@ -1,6 +1,6 @@
-import { Agent } from "../Agent";
-import { Chat } from "../Chat";
-import { IntentData } from "./IntentData";
+import { Agent } from "../agent";
+import { Chat } from "../chat";
+import { IntentData } from "./intentData";
 
 export interface GenerateResult {
   getResponse(runner: Agent): Promise<string>;

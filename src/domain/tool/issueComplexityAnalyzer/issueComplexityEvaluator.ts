@@ -1,5 +1,5 @@
-import { ComplexityAnalysis, ComplexityCriteria, IssueSignals, Level } from "./Complexity";
-import { IssueSignalsExtractor } from "./IssueSignalsExtractor";
+import { ComplexityAnalysis, ComplexityCriteria, IssueSignals, Level } from "./complexity";
+import { IssueSignalsExtractor } from "./issueSignalsExtractor";
 
 export class IssueComplexityEvaluator {
 

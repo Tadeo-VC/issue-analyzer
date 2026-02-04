@@ -1,6 +1,6 @@
 import { Octokit } from "octokit";
-import { GitHostingPlatform } from "./GitHostingPlatform";
-import { Issue, Label } from "./Issue";
+import { GitHostingPlatform } from "./gitHostingPlatform";
+import { Issue, Label } from "./issue";
 
 export class GitHub implements GitHostingPlatform {
   async getRepositoryIssues(authHeader: string, repositoryName: string, ownerName: string): Promise<Issue[]> {

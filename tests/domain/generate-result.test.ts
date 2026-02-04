@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
-import { ResponseResult, ToolCallResult } from "@/src/domain/llm/GenerateResult";
-import { IntentData } from "@/src/domain/llm/IntentData";
-import type { Agent } from "@/src/domain/Agent";
-import { Chat } from "@/src/domain/Chat";
+import { ResponseResult, ToolCallResult } from "@/src/domain/llm/generateResult";
+import { IntentData } from "@/src/domain/llm/intentData";
+import type { Agent } from "@/src/domain/agent";
+import { Chat } from "@/src/domain/chat";
 
 describe("GenerateResult", () => {
   describe("ResponseResult", () => {

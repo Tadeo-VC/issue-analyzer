@@ -1,12 +1,11 @@
+import { Chat } from "@/src/domain/chat";
 import { describe, it, expect, vi } from "vitest";
-import { Agent } from "@/src/domain/Agent";
-import type { ClientLLM } from "@/src/domain/llm/ClientLLM";
-import type { GenerateResult } from "@/src/domain/llm/GenerateResult";
-import { ResponseResult, ToolCallResult } from "@/src/domain/llm/GenerateResult";
-import type { Tool } from "@/src/domain/tool/Tool";
-import { UndefinedToolException } from "@/src/domain/Errors";
-import { Chat } from "@/src/domain/Chat";
-import { IntentData } from "@/src/domain/llm/IntentData";
+import { Agent } from "@/src/domain/agent";
+import { UndefinedToolException } from "@/src/domain/errors";
+import { ClientLLM } from "@/src/domain/llm/clientLLM";
+import { Tool } from "@/src/domain/tool/tool";
+import { GenerateResult, ResponseResult, ToolCallResult } from "@/src/domain/llm/generateResult";
+import { IntentData } from "@/src/domain/llm/intentData";
 
 describe("Agent", () => {
 

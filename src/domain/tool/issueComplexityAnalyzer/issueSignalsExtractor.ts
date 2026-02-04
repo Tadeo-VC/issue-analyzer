@@ -1,6 +1,6 @@
-import { GitHostingPlatform } from "../GitHostingPlatform/GitHostingPlatform";
-import { Issue } from "../GitHostingPlatform/Issue";
-import { IssueSignals } from "./Complexity";
+import { GitHostingPlatform } from "../gitHostingPlatform/gitHostingPlatform";
+import { Issue } from "../gitHostingPlatform/issue";
+import { IssueSignals } from "./complexity";
 
 export class IssueSignalsExtractor {
 

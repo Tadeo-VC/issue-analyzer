@@ -1,8 +1,8 @@
-import { Chat } from "../Chat"
-import { GenerateResult, ToolCallResult, ResponseResult } from "./GenerateResult";
-import { Intention, LLMMessage, LLMRole } from "./LLMMessage";
-import { IntentData } from "./IntentData";
-import { SystemPrompt } from "./Prompt";
+import { Chat } from "../chat"
+import { GenerateResult, ToolCallResult, ResponseResult } from "./generateResult";
+import { IntentData } from "./intentData";
+import { Intention, LLMMessage, LLMRole } from "./llmMessage";
+import { SystemPrompt } from "./prompts";
 
 export abstract class ClientLLM {
 

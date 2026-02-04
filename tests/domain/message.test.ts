@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { Message } from "@/src/domain/Message";
+import { Message } from "@/src/domain/message";
 
 describe("Message", () => {
   it("getRequest returns the request string", () => {

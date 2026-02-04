@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { LLMMessage, LLMRole } from "@/src/domain/llm/LLMMessage";
+import { LLMMessage, LLMRole } from "@/src/domain/llm/llmMessage";
 
 describe("LLMMessage", () => {
   it("constructor sets role and content", () => {

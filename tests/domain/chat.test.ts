@@ -1,8 +1,9 @@
+import { Agent } from "@/src/domain/agent";
+import { Chat } from "@/src/domain/chat";
+import { Message } from "@/src/domain/message";
+import { User } from "@/src/domain/user";
 import { describe, it, expect, vi } from "vitest";
-import { Chat } from "@/src/domain/Chat";
-import { Message } from "@/src/domain/Message";
-import { User } from "@/src/domain/User";
-import type { Agent } from "@/src/domain/Agent";
+
 
 describe("Chat", () => {
   const createMockAgent = (): Agent => ({

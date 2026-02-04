@@ -1,7 +1,6 @@
-import { Message } from "./Message";
-import { User } from "./User";
-import { Agent } from "./Agent";
-
+import { Message } from "./message";
+import { User } from "./user";
+import { Agent } from "./agent";
 export class Chat {
   private title: string;
   private messages: Message[];

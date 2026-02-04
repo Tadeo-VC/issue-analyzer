@@ -1,16 +1,23 @@
 import { describe, it, expect, vi } from "vitest";
 import { Agent } from "@/src/domain/Agent";
 import type { ClientLLM } from "@/src/domain/llm/ClientLLM";
-import type { Message } from "@/src/domain/Message";
 import type { GenerateResult } from "@/src/domain/llm/GenerateResult";
 import { ResponseResult, ToolCallResult } from "@/src/domain/llm/GenerateResult";
 import type { Tool } from "@/src/domain/Tool";
 import { UndefinedToolException } from "@/src/domain/Errors";
-import { sendResponse } from "next/dist/server/image-optimizer";
+import { Chat } from "@/src/domain/Chat";
+import { IntentData } from "@/src/domain/llm/IntentData";
 
 describe("Agent", () => {
-  const createMockMessage = (request = "hello"): Message =>
-    ({ request } as unknown as Message);
+
+  const createMockChat = (): Chat => ({
+    newMessage: vi.fn(),
+    sendMessage: vi.fn(),
+    userInput: vi.fn().mockReturnValue("user input"),
+    lastUserMessages: vi.fn().mockReturnValue(["msg1", "msg2"]),
+    lastAssistantMessages: vi.fn().mockReturnValue(["resp1", "resp2"]),
+  } as unknown as Chat);
+
   
   const createMockTool = (result: string): Tool => ({
     name: "mockTool",
@@ -24,38 +31,42 @@ describe("Agent", () => {
   } as unknown as ClientLLM); 
   
   it("receiveMessage returns the text when the LLM returns ResponseResult", async () => {
-    const text = "Hello, I am the assistant.";
-    const llm = createMockLLM(new ResponseResult(text));
+    const intentData: IntentData = {
+      intention: "general_chat" ,
+      args: { message : "Hello" }
+    };
+    const llm = createMockLLM(new ResponseResult(intentData))
     const agent = new Agent(llm);
 
-    const message = createMockMessage();
-    const response = await agent.receiveMessage(message);
+    const chat = createMockChat();
+    const response = await agent.receiveMessage(chat);
 
-    expect(response).toBe(text);
-    expect(llm.generateResponse).toHaveBeenCalledWith(message);
+    expect(response).toBe("Hello");
+    expect(llm.generateResponse).toHaveBeenCalledWith(chat);
   });
 
   it("receiveMessage runs the tool and returns its result when the LLM returns ToolCallResult", async () => {
     const toolResult = "tool result";
     const tool = createMockTool(toolResult);
-    const llm = createMockLLM(new ToolCallResult("mockTool", { q: "x" }));
+    const llm = createMockLLM(new ToolCallResult("mockTool", { q: "x" }, {} as Chat));
     const agent = new Agent(llm, [tool]);
 
-    const message = createMockMessage();
-    const response = await agent.receiveMessage(message);
+    const chat = createMockChat();
+    const response = await agent.receiveMessage(chat);
 
     expect(response).toBe(toolResult);
     expect(tool.call).toHaveBeenCalledWith({ q: "x" });
   });
 
   it("callTool throws UndefinedToolException when the tool does not exist", async () => {
-    const llm = createMockLLM(new ResponseResult(""));
+    const llm = createMockLLM(new ResponseResult({ intention: "general_chat", args: {} }));
     const agent = new Agent(llm);
 
-    await expect(agent.callTool("nonexistentTool", {})).rejects.toThrow(
+    const chat = createMockChat();
+    await expect(agent.callTool("nonexistentTool", {}, chat)).rejects.toThrow(
       UndefinedToolException
     );
-    await expect(agent.callTool("nonexistentTool", {})).rejects.toMatchObject({
+    await expect(agent.callTool("nonexistentTool", {}, chat)).rejects.toMatchObject({
       toolName: "nonexistentTool",
     });
   });

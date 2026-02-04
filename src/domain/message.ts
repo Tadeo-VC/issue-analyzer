@@ -1,3 +1,5 @@
+import { ResponseState } from "./ResponseState";
+
 export class Message {
   private request: string;
   private response?: string;

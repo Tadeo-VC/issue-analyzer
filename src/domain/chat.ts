@@ -38,6 +38,6 @@ export class Chat {
   }  
 
   private lastTenMessages(messages: Message[]): Message[] {
-    return this.messages.slice(-11,-1);
+    return this.messages.slice(-10);
   }
 }

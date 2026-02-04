@@ -1,13 +1,14 @@
 import { Chat } from "../Chat"
 import { GenerateResult, ToolCallResult, ResponseResult } from "./GenerateResult";
-import { intentData, Intention, LLMMessage, LLMRole } from "./LLMMessage";
+import { Intention, LLMMessage, LLMRole } from "./LLMMessage";
+import { IntentData } from "./IntentData";
 import { SystemPrompt } from "./Prompt";
 
 export abstract class ClientLLM {
 
   async generateResponse(chat: Chat): Promise<GenerateResult> {
 
-    const responseText: intentData = await this.sendRequest(
+    const responseText: IntentData = await this.sendRequest(
       this.buildPrompt(SystemPrompt.FIND_INTENTION),
       this.buildChatHistory(chat),
       this.buildLastMessage(chat)
@@ -73,7 +74,7 @@ export abstract class ClientLLM {
     systemPrompt: LLMMessage,
     messages: LLMMessage[],
     userInput: LLMMessage
-  ): Promise<intentData>
+  ): Promise<IntentData>
 
   private buildChatHistory(chat: Chat): LLMMessage[] {
     const history: LLMMessage[] = [];

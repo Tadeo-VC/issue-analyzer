@@ -1,5 +1,5 @@
-import { Chat } from "./Chat";
 import { UndefinedToolException } from "./Errors";
+import type { Chat } from "./Chat";
 import type { ClientLLM } from "./llm/ClientLLM";
 import type { Tool } from "./tool/Tool";
 

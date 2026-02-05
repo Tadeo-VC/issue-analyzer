@@ -26,4 +26,12 @@ export class Message {
   getRequest(): string {
     return this.request
   }
+
+  getResponseState(): string {
+    return ResponseState[this.responseState];
+  }
+
+  hasResponse(): boolean {
+    return this.response !== undefined;
+  }
 }

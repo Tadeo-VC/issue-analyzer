@@ -60,7 +60,7 @@ export abstract class ClientLLM {
   
   async generateToolResponse(toolResult: unknown, chat: Chat): Promise<ResponseResult> {
     const naturalLanguageResponse = await this.sendRequest(
-      this.buildPrompt(SystemPrompt.EXPLAIN_RESULTS),
+      this.buildPrompt(SystemPrompt.EXPLAIN_TOOL_RESULT),
       [
         new LLMMessage(LLMRole.ASSISTANT,JSON.stringify(toolResult))
       ].concat(this.buildChatHistory(chat)),

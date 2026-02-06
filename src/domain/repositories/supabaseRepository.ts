@@ -25,9 +25,6 @@ interface UserRow {
   id: string;
   name: string;
   email: string;
-  password?: string | null;
-  created_at?: string;
-  updated_at?: string;
 }
 
 export class ChatSupabaseRepository implements DBRepository {
@@ -226,7 +223,7 @@ export class ChatSupabaseRepository implements DBRepository {
   }
 
   private mapUserFromRow(row: UserRow): User {
-    const pwd = row.password || "";
-    return new User(row.name, row.email, pwd, row.id);
+
+    return new User(row.name, row.email, row.id);
   }
 }

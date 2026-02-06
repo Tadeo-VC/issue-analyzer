@@ -7,6 +7,7 @@ import {
   UserNotFoundError,
 } from "../errors";
 import { th } from "zod/locales";
+import { AgentFactory } from "../factories/agentFactory";
 
 export interface DBRepository {
   saveChat(chat: Chat, userId: string): Promise<void>;
@@ -229,8 +230,7 @@ export class SupabaseRepository implements DBRepository {
 
   private async mapChatFromRow(row: ChatRow, messages: Message[]): Promise<Chat> {
 
-    // Note: Agent is intentionally not persisted (transient)
-    return new Chat(row.title, messages, await this.findUserById(row.user_id), null as any, row.id);
+    return new Chat(row.title, messages, await this.findUserById(row.user_id), await AgentFactory.createAgent(), row.id);
   }
 
   private mapMessageFromRow(row: MessageRow): Message {

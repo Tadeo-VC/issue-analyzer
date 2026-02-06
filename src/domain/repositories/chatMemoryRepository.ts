@@ -2,13 +2,13 @@ import z from "zod";
 import { Chat } from "../chat";
 import { User } from "../user";
 import { DBRepository } from "./dbRepository";
-import { ChatSupabaseRepository } from "./supabaseRepository";
 import { createSupabaseServerClient } from "@/src/utils/supabase/serverClient";
 import {
   MissingAuthTokenError,
   InvalidChatError,
   ChatNotFoundError,
 } from "../errors";
+import { SupabaseRepository } from "./supabaseRepository";
 
 interface ChatContext {
     chat: Chat
@@ -29,7 +29,7 @@ export class ChatMemoryRepository {
 
     public static async getInstance(): Promise<ChatMemoryRepository> {
         if (!this.instance) {
-            this.instance = new ChatMemoryRepository(new ChatSupabaseRepository(await createSupabaseServerClient()));
+            this.instance = new ChatMemoryRepository(new SupabaseRepository(await createSupabaseServerClient()));
         }
         return this.instance;
     }

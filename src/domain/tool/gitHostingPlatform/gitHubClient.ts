@@ -9,7 +9,7 @@ import {
   GitHubRequestTimeoutError,
 } from "../../errors";
 
-export class GitHubAPIClient implements GitHostingPlatform {
+export class GitHubClient implements GitHostingPlatform {
   private baseUrl = "https://api.github.com";
 
   constructor() {}

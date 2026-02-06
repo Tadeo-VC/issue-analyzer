@@ -20,10 +20,20 @@ interface MessageRow {
   created_at: string;
 }
 
+interface UserRow {
+  id: string;
+  name: string;
+  email: string;
+  password?: string | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export class ChatSupabaseRepository {
   private supabase: SupabaseClient;
   private chatsTable = "chats";
   private messagesTable = "messages";
+  private usersTable = "users";
 
   constructor(supabaseClient: SupabaseClient) {
     this.supabase = supabaseClient;
@@ -182,6 +192,27 @@ export class ChatSupabaseRepository {
     }
   }
 
+  async findUserById(userId: string): Promise<User | null> {
+    const { data, error } = await this.supabase
+      .from(this.usersTable)
+      .select("*")
+      .eq("id", userId)
+      .single();
+
+    if (error) {
+      if ((error as any).code === "PGRST116") {
+        return null;
+      }
+      throw new Error(`Failed to fetch user: ${error.message}`);
+    }
+
+    if (!data) {
+      return null;
+    }
+
+    return this.mapUserFromRow(data as UserRow);
+  }
+
   private mapChatFromRow(row: ChatRow, messages: Message[]): Chat {
     // Create a minimal User object from userId (without loading full user data)
     const user = new User("", "", "", row.user_id); // Placeholder - adjust based on your needs
@@ -195,5 +226,10 @@ export class ChatSupabaseRepository {
       message.receiveResponse(row.response);
     }
     return message;
+  }
+
+  private mapUserFromRow(row: UserRow): User {
+    const pwd = row.password || "";
+    return new User(row.name, row.email, pwd, row.id);
   }
 }

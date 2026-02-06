@@ -7,7 +7,7 @@ export class ChatMemoryRepository {
     private chats: Map<string, Chat>;
     private chatSupabaseRepository: ChatSupabaseRepository;
     private static instance: ChatMemoryRepository;
-    private ttlMs = 30 * 60 * 1000; // 30 minutes
+    private ttlMs = 30 * 60 * 1000; // 30 minutes, time to live minutes
     private timers: Map<string, NodeJS.Timeout>;
 
     public static async getInstance(): Promise<ChatMemoryRepository> {

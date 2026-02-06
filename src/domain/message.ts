@@ -1,4 +1,5 @@
 import { ResponseState } from "./responseState";
+import { MessageResponseNotFoundError } from "./errors";
 
 export class Message {
   private request: string;
@@ -17,7 +18,7 @@ export class Message {
   getResponse(): string {
 
     if(!this.response){
-      throw new Error("The message has no response");
+      throw new MessageResponseNotFoundError();
     }
 
     return this.response;

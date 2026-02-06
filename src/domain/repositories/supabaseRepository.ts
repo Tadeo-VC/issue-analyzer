@@ -2,7 +2,20 @@ import { SupabaseClient } from "@supabase/supabase-js";
 import { Chat } from "../chat";
 import { Message } from "../message";
 import { User } from "../user";
-import { DBRepository } from "./dbRepository";
+import {
+  DatabaseOperationError,
+  UserNotFoundError,
+} from "../errors";
+import { th } from "zod/locales";
+
+export interface DBRepository {
+  saveChat(chat: Chat, userId: string): Promise<void>;
+  getChatById(chatId: string): Promise<Chat | null>;
+  getChatsByUserId(userId: string): Promise<Chat[]>;
+  updateChat(chatId: string, chat: Chat): Promise<void>;
+  deleteChat(chatId: string): Promise<void>;
+  findUserById(userId: string): Promise<User | null>;
+}
 
 interface ChatRow {
   id: string;
@@ -25,6 +38,9 @@ interface UserRow {
   id: string;
   name: string;
   email: string;
+  password?: string | null;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export class ChatSupabaseRepository implements DBRepository {
@@ -55,7 +71,7 @@ export class ChatSupabaseRepository implements DBRepository {
       .single();
 
     if (error) {
-      throw new Error(`Failed to save chat: ${error.message}`);
+      throw new DatabaseOperationError("save chat", error.message);
     }
 
     // Save all messages for this chat
@@ -78,7 +94,7 @@ export class ChatSupabaseRepository implements DBRepository {
       .insert(messageRows);
 
     if (error) {
-      throw new Error(`Failed to save messages: ${error.message}`);
+      throw new DatabaseOperationError("save messages", error.message);
     }
   }
 
@@ -93,7 +109,7 @@ export class ChatSupabaseRepository implements DBRepository {
       if (chatError.code === "PGRST116") {
         return null;
       }
-      throw new Error(`Failed to fetch chat: ${chatError.message}`);
+      throw new DatabaseOperationError("fetch chat", chatError.message);
     }
 
     const { data: messagesData, error: messagesError } = await this.supabase
@@ -103,7 +119,7 @@ export class ChatSupabaseRepository implements DBRepository {
       .order("created_at", { ascending: true });
 
     if (messagesError) {
-      throw new Error(`Failed to fetch messages: ${messagesError.message}`);
+      throw new DatabaseOperationError("fetch messages", messagesError.message);
     }
 
     const messages = messagesData?.map(
@@ -121,7 +137,7 @@ export class ChatSupabaseRepository implements DBRepository {
       .order("created_at", { ascending: false });
 
     if (chatsError) {
-      throw new Error(`Failed to fetch chats: ${chatsError.message}`);
+      throw new DatabaseOperationError("fetch chats", chatsError.message);
     }
 
     const chats: Chat[] = [];
@@ -134,7 +150,7 @@ export class ChatSupabaseRepository implements DBRepository {
         .order("created_at", { ascending: true });
 
       if (messagesError) {
-        throw new Error(`Failed to fetch messages: ${messagesError.message}`);
+        throw new DatabaseOperationError("fetch messages", messagesError.message);
       }
 
       const messages = messagesData?.map((msg: MessageRow) =>
@@ -157,7 +173,7 @@ export class ChatSupabaseRepository implements DBRepository {
       .eq("id", chatId);
 
     if (error) {
-      throw new Error(`Failed to update chat: ${error.message}`);
+      throw new DatabaseOperationError("update chat", error.message);
     }
 
     // Delete existing messages and insert new ones
@@ -176,7 +192,7 @@ export class ChatSupabaseRepository implements DBRepository {
       .eq("chat_id", chatId);
 
     if (messagesError) {
-      throw new Error(`Failed to delete messages: ${messagesError.message}`);
+      throw new DatabaseOperationError("delete messages", messagesError.message);
     }
 
     // Delete chat
@@ -186,7 +202,7 @@ export class ChatSupabaseRepository implements DBRepository {
       .eq("id", chatId);
 
     if (chatError) {
-      throw new Error(`Failed to delete chat: ${chatError.message}`);
+      throw new DatabaseOperationError("delete chat", chatError.message);
     }
   }
 
@@ -198,11 +214,14 @@ export class ChatSupabaseRepository implements DBRepository {
       .single();
 
     if (error) {
-      throw new Error(`Failed to fetch user: ${error.message}`);
+      if (error.code === "PGRST116") {
+        throw new UserNotFoundError(userId);
+      }
+      throw new DatabaseOperationError("fetch user", error.message);
     }
 
     if (!data) {
-      throw new Error(`User with id ${userId} not found`);
+      throw new UserNotFoundError(userId);
     }
 
     return this.mapUserFromRow(data as UserRow);
@@ -223,7 +242,6 @@ export class ChatSupabaseRepository implements DBRepository {
   }
 
   private mapUserFromRow(row: UserRow): User {
-
     return new User(row.name, row.email, row.id);
   }
 }

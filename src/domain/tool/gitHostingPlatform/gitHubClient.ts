@@ -2,6 +2,12 @@ import fetch from "node-fetch";
 import { GitHostingPlatform } from "./gitHostingPlatform";
 import { Issue, Label } from "./issue";
 import z from "zod";
+import {
+  GitHubRateLimitError,
+  GitHubAPIError,
+  GitHubInvalidResponseError,
+  GitHubRequestTimeoutError,
+} from "../../errors";
 
 export class GitHubAPIClient implements GitHostingPlatform {
   private baseUrl = "https://api.github.com";
@@ -28,16 +34,16 @@ export class GitHubAPIClient implements GitHostingPlatform {
       if (!res.ok) {
         // manejo básico de rate limit
         if (res.status === 403 && res.headers.get("X-RateLimit-Remaining") === "0") {
-          throw new Error("GitHub rate limit exceeded");
+          throw new GitHubRateLimitError();
         }
-        throw new Error(`GitHub API error: ${res.status} ${res.statusText}`);
+        throw new GitHubAPIError(res.status, res.statusText);
       }
 
       const data = await res.json();
 
       const result = IssuesResponseSchema.safeParse(data);
       if (!result.success) {
-        throw new Error("GitHub API response structure is invalid: " + result.error.message);
+        throw new GitHubInvalidResponseError(result.error.message);
       }
 
       const issues = result.data.map(issue => ({
@@ -59,7 +65,7 @@ export class GitHubAPIClient implements GitHostingPlatform {
           )
       );
     } catch (err: any) {
-      if (err.name === "AbortError") throw new Error("Request timed out");
+      if (err.name === "AbortError") throw new GitHubRequestTimeoutError();
       throw err;
     } finally {
       clearTimeout(timeout);
@@ -81,7 +87,7 @@ const LabelSchema = z.union([
 const IssueSchema = z.object({
   number: z.number(),
   title: z.string(),
-  body: z.string().optional(),
+  body: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
   labels: z.array(LabelSchema),

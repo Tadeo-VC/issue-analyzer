@@ -4,6 +4,7 @@ export const IntentDataSchema = z.object({
     intention: z.enum([
       "general_chat",
       "analyze_issues_complexity", 
+      "persist_chat"
     ]),
     args: z.record(z.string(), z.any()).default({}) 
   });

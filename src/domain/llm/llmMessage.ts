@@ -2,7 +2,8 @@ import { EasyInputMessage, ResponseInputItem } from "openai/resources/responses/
 
 export enum Intention {
     ANALYZE_ISSUES_COMPLEXITY = "analyze_issues_complexity",
-    GENERAL_CHAT = "general_chat"
+    GENERAL_CHAT = "general_chat",
+    PERSIST_CHAT = "persist_chat"
 }
 
 export enum LLMRole {

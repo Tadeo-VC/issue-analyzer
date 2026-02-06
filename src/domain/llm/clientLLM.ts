@@ -15,10 +15,12 @@ export abstract class ClientLLM {
       this.buildLastMessage(chat)
     );
   
+    let payload = {}
+
     switch (responseText.intention) {
       case Intention.ANALYZE_ISSUES_COMPLEXITY:
 
-          const payload = {
+          payload = {
             chatId: chat.getId(),
             result: responseText,
           };
@@ -28,6 +30,20 @@ export abstract class ClientLLM {
           payload,
           chat
         );
+
+      case Intention.PERSIST_CHAT:
+
+          payload = {
+            chatId: chat.getId(),
+            result: responseText,
+          };
+
+        return new ToolCallResult(
+          "analyze-issues-complexity",
+          payload,
+          chat
+        );
+  
   
       case Intention.GENERAL_CHAT: {
         const naturalLanguageResponse = await this.sendRequest(

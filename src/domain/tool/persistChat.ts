@@ -4,13 +4,9 @@ import z from "zod";
 
 export class PersistChat implements Tool {
     
-    private toolName = "persist_chat";
+    readonly name = "persist_chat";
 
     constructor() {}
-
-    name(): string {
-        return this.toolName;
-    }
 
     async call(args: unknown): Promise<string> {
         const result = toolSchema.safeParse(args);

@@ -4,10 +4,11 @@ import { IssueComplexityEvaluator } from "./issueComplexityEvaluator";
 import { IssueSignalsExtractor } from "./issueSignalsExtractor";
 import { DBRepository } from "../../repositories/dbRepository";
 import { ChatMemoryRepository } from "../../repositories/chatMemoryRepository";
+import { Tool } from "../tool";
 
-export class IssueComplexityAnalyzer {
+export class IssueComplexityAnalyzer implements Tool {
 
-    private toolName = "analyze_issues_complexity";
+    readonly name = "analyze_issues_complexity";
     private issueComplexityEvaluator: IssueComplexityEvaluator;
     private issueSignalsExtractor: IssueSignalsExtractor;
     private gitHostingPlatform: GitHostingPlatform;
@@ -16,10 +17,6 @@ export class IssueComplexityAnalyzer {
         this.issueComplexityEvaluator = new IssueComplexityEvaluator();
         this.issueSignalsExtractor = new IssueSignalsExtractor();
         this.gitHostingPlatform = gitHostingPlatform;
-    }
-
-    name(): string {
-        return this.toolName;
     }
 
     async call(args: unknown): Promise<string> {

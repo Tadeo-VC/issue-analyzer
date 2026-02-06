@@ -1,6 +1,8 @@
-import { ChatMemoryRepository } from "../repositories/chatMemoryRepository";
+
 import { Tool } from "./tool";
 import z from "zod";
+import { ToolArgumentsError } from "../errors";
+import { ChatContextRepository } from "../repositories/chatMemoryRepository";
 
 export class PersistChat implements Tool {
     
@@ -11,10 +13,10 @@ export class PersistChat implements Tool {
     async call(args: unknown): Promise<string> {
         const result = toolSchema.safeParse(args);
         if (!result.success) {
-            throw new Error("Invalid arguments for persist_chat tool");
+            throw new ToolArgumentsError("persist_chat");
         }
         const chatId = result.data.args.chat_id;
-        const chatMemoryRepository = await ChatMemoryRepository.getInstance();
+        const chatMemoryRepository = await ChatContextRepository.getInstance();
         try {
             chatMemoryRepository.persistChat(chatId);
             return `{

@@ -18,14 +18,14 @@ Few-shot examples:
 User: "Analizá la complejidad de los issues"
 Output:
 {
-  "intention": "tool",
+  "intention": "analyze_issues_complexity",
   "args": {}
 }
 
 User: "Guardá este chat"
 Output:
 {
-  "intention": "tool",
+  "intention": "persist_chat",
   "args": {}
 }
 

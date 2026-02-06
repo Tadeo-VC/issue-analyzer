@@ -2,13 +2,14 @@ import { Message } from "./message";
 import { User } from "./user";
 import { Agent } from "./agent";
 export class Chat {
+
   private id: string;
   private title: string;
   private messages: Message[];
   private user: User;
   private agent: Agent;
 
-  constructor(title: string, messages: Message[], user: User, agent: Agent, id?: string) {
+  constructor(title: string, messages: Message[], user: User, agent: Agent, id: string) {
     this.id = id || this.generateId();
     this.title = title;
     this.messages = messages;
@@ -68,5 +69,9 @@ export class Chat {
 
   setId(id: string): void {
     this.id = id;
+  }
+
+  getUserId(): string {
+    return this.user.getId();
   }
 }

@@ -37,12 +37,12 @@ export class ChatMemoryRepository {
     }
 
     // for tool persistChat
-    async persistChat(chatId: string): Promise<string> {
+    async persistChat(chatId: string) {
         const chat = this.chats.get(chatId);
         if (!chat) {
             throw new Error(`Chat with id ${chatId} not found in memory`);
         }
-        return this.chatSupabaseRepository.saveChat(chat, chat.getUserId());
+        this.chatSupabaseRepository.saveChat(chat, chat.getUserId());
     }
 
     async getUserChats(user: User): Promise<Chat[]> {

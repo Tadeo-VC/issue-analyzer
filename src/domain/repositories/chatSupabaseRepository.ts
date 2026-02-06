@@ -29,7 +29,7 @@ export class ChatSupabaseRepository {
     this.supabase = supabaseClient;
   }
 
-  async saveChat(chat: Chat, userId: string) {
+  async saveChat(chat: Chat, userId: string): Promise<void> {
     const chatId = chat.getId();
     
     const { data, error } = await this.supabase

@@ -4,11 +4,7 @@ import { IssueSignals } from "./complexity";
 
 export class IssueSignalsExtractor {
 
-  private gitHostingPlatform: GitHostingPlatform;
-
-  constructor(gitHostingPlatform: GitHostingPlatform) {
-    this.gitHostingPlatform = gitHostingPlatform;
-  }
+  constructor() {}
 
   extract(issue: Issue): IssueSignals {
     const text = this.normalizeText(issue);

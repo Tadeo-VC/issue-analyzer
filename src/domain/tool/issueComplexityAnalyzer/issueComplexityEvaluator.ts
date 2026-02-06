@@ -3,11 +3,7 @@ import { IssueSignalsExtractor } from "./issueSignalsExtractor";
 
 export class IssueComplexityEvaluator {
 
-  private extractor: IssueSignalsExtractor;
-
-  constructor(extractor: IssueSignalsExtractor) {
-    this.extractor = extractor;
-  }
+  constructor() {}
 
   evaluate(signals: IssueSignals): ComplexityAnalysis {
     const criteria: ComplexityCriteria = {

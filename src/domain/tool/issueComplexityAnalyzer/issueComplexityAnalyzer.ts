@@ -24,15 +24,15 @@ export class IssueComplexityAnalyzer implements Tool {
     }
 
     async call(args: unknown): Promise<string> {
-        const result = analyzeIssuesSchema.safeParse(args);
+        const result = AnalyzeIssuesComplexityResultSchema.safeParse(args);
         if (!result.success) {
             throw new ToolArgumentsError("analyze_issues_complexity");
         }
 
         const authToken = await ChatContextRepository.getInstance()
-            .then(repo => repo.getUserAuth(result.data.args.chat_id));
+            .then(repo => repo.getUserAuth(result.data.chatId));
 
-        const analysis = this.gitHostingPlatform.getRepositoryIssues(authToken, result.data.args.user, result.data.args.repo)
+        const analysis = this.gitHostingPlatform.getRepositoryIssues(authToken, result.data.result.args.user, result.data.result.args.repo)
             .then(issues => {
                 const analyses = issues.map(issue => {
                     const signals = this.issueSignalsExtractor.extract(issue);
@@ -47,11 +47,13 @@ export class IssueComplexityAnalyzer implements Tool {
     }
 }    
 
-const analyzeIssuesSchema = z.object({
-  intention: z.literal("analyze_issues_complexity"), // solo acepta esta intención
-  args: z.object({
-    chat_id: z.string(),
-    repo: z.string(), 
-    user: z.string(),
+export const AnalyzeIssuesComplexityResultSchema = z.object({
+  chatId: z.string(),
+  result: z.object({
+    intention: z.literal("analyze_issues_complexity"),
+    args: z.object({
+      repo: z.string(),
+      user: z.string(),
+    }),
   }),
 });

@@ -17,9 +17,15 @@ export abstract class ClientLLM {
   
     switch (responseText.intention) {
       case Intention.ANALYZE_ISSUES_COMPLEXITY:
+
+          const payload = {
+            chatId: chat.getId(),
+            result: responseText,
+          };
+
         return new ToolCallResult(
           "analyze-issues-complexity",
-          responseText.args,
+          payload,
           chat
         );
   

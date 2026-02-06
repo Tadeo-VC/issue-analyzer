@@ -11,11 +11,11 @@ export class PersistChat implements Tool {
     constructor() {}
 
     async call(args: unknown): Promise<string> {
-        const result = toolSchema.safeParse(args);
+        const result = PersistChatToolSchema.safeParse(args);
         if (!result.success) {
             throw new ToolArgumentsError("persist_chat");
         }
-        const chatId = result.data.args.chat_id;
+        const chatId = result.data.chat_id;
         const chatMemoryRepository = await ChatContextRepository.getInstance();
         try {
             chatMemoryRepository.persistChat(chatId);
@@ -32,9 +32,8 @@ export class PersistChat implements Tool {
     }
 }
 
-const toolSchema = z.object({
-  intention: z.literal("persist_chat"),    
-  args: z.object({
-    chat_id: z.string(),        
-  })
+export const PersistChatToolSchema = z.object({
+  chat_id: z.string(),
+  intention: z.literal("persist_chat"),
+  args: z.object({}).strict(),
 });

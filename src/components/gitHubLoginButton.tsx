@@ -1,6 +1,7 @@
 "use client";
-import Image from "next/image"; 
 import { getSupabaseBrowserClient } from "../utils/supabase/browserClient";
+import { Button } from "@chakra-ui/react";
+import { FaGithub } from "react-icons/fa";
 
 export default function GitHubLoginButton() {
     
@@ -16,10 +17,14 @@ export default function GitHubLoginButton() {
     }
     
     return (
-        <button className="bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-        onClick={handleSupabaseGitHubLogin}>
+        <Button
+          colorScheme="gray"
+          size="lg"
+          onClick={handleSupabaseGitHubLogin}
+          _hover={{ bg: "gray.700", color: "white" }}
+        >
+          <FaGithub style={{ marginRight: 8 }} />
           Sign in with GitHub
-          <Image src="https://github.githubassets.com/favicons/favicon.svg" alt="GitHub icon" width={16} height={16} />
-        </button>
+        </Button>
     );
 }

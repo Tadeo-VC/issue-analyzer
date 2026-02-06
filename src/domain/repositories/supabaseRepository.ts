@@ -2,6 +2,7 @@ import { SupabaseClient } from "@supabase/supabase-js";
 import { Chat } from "../chat";
 import { Message } from "../message";
 import { User } from "../user";
+import { DBRepository } from "./dbRepository";
 
 interface ChatRow {
   id: string;
@@ -29,7 +30,7 @@ interface UserRow {
   updated_at?: string;
 }
 
-export class ChatSupabaseRepository {
+export class ChatSupabaseRepository implements DBRepository {
   private supabase: SupabaseClient;
   private chatsTable = "chats";
   private messagesTable = "messages";

@@ -1,10 +1,7 @@
 import { EasyInputMessage, ResponseInputItem } from "openai/resources/responses/responses.js";
 
 export enum Intention {
-    ANALYZE_ISSUES_PRIORITY = "analyze_issues_priority",
-    ANALYZE_COMPLEXITY = "analyze_complexity",
-    FIND_REPO = "find_repo",
-    LOGIN_GITHUB = "login_github",
+    ANALYZE_ISSUES_COMPLEXITY = "analyze_issues_complexity",
     GENERAL_CHAT = "general_chat"
 }
 

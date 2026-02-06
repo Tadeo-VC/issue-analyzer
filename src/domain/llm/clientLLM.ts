@@ -3,6 +3,7 @@ import { GenerateResult, ToolCallResult, ResponseResult } from "./generateResult
 import { IntentData } from "./intentData";
 import { Intention, LLMMessage, LLMRole } from "./llmMessage";
 import { SystemPrompt } from "./prompts";
+import { UnsupportedIntentionError } from "../errors";
 
 export abstract class ClientLLM {
 
@@ -15,30 +16,9 @@ export abstract class ClientLLM {
     );
   
     switch (responseText.intention) {
-      case Intention.ANALYZE_ISSUES_PRIORITY:
+      case Intention.ANALYZE_ISSUES_COMPLEXITY:
         return new ToolCallResult(
-          "analyzeIssuesPriority",
-          responseText.args,
-          chat
-        );
-  
-      case Intention.ANALYZE_COMPLEXITY:
-        return new ToolCallResult(
-          "analyzeComplexity",
-          responseText.args,
-          chat
-        );
-
-      case Intention.FIND_REPO:
-        return new ToolCallResult(
-          "findRepo",
-          responseText.args,
-          chat
-        );  
-  
-      case Intention.LOGIN_GITHUB:
-        return new ToolCallResult(
-          "loginGithub",
+          "analyze-issues-complexity",
           responseText.args,
           chat
         );
@@ -54,7 +34,7 @@ export abstract class ClientLLM {
       }
   
       default:
-        throw new Error(`Unsupported intention: ${responseText.intention}`);
+        throw new UnsupportedIntentionError(responseText.intention);
     }
   }
   
@@ -70,38 +50,22 @@ export abstract class ClientLLM {
     return new ResponseResult(naturalLanguageResponse);
   }
 
-  abstract sendRequest(
+  protected abstract sendRequest(
     systemPrompt: LLMMessage,
-    messages: LLMMessage[],
-    userInput: LLMMessage
-  ): Promise<IntentData>
+    chatHistory: LLMMessage[],
+    latestMessage: LLMMessage
+  ): Promise<any>;
 
-  private buildChatHistory(chat: Chat): LLMMessage[] {
-    const history: LLMMessage[] = [];
-  
-    const userMessages = chat.lastUserMessages();
-    const assistantMessages = chat.lastAssistantMessages();
-  
-    const maxLength = Math.max(userMessages.length, assistantMessages.length);
-  
-    for (let i = 0; i < maxLength; i++) {
-      if (i < userMessages.length) {
-        history.push(new LLMMessage(LLMRole.USER, userMessages[i]));
-      }
-  
-      if (i < assistantMessages.length) {
-        history.push(new LLMMessage(LLMRole.ASSISTANT, assistantMessages[i]));
-      }
-    }
-  
-    return history;
+  protected buildPrompt(systemPrompt: SystemPrompt): LLMMessage {
+    return new LLMMessage(LLMRole.SYSTEM, systemPrompt);
   }
 
-  private buildLastMessage(chat: Chat): LLMMessage {
-    return new LLMMessage(LLMRole.USER, chat.userInput())
+  protected buildChatHistory(chat: Chat): LLMMessage[] {
+    return chat.getMessages().map(message => new LLMMessage(LLMRole.USER, message.getRequest()));
   }
 
-  private buildPrompt(prompt: SystemPrompt): LLMMessage {
-    return new LLMMessage(LLMRole.SYSTEM, prompt)
+  protected buildLastMessage(chat: Chat): LLMMessage {
+    const lastMessage = chat.getMessages()[chat.getMessages().length - 1];
+    return new LLMMessage(LLMRole.USER, lastMessage.getRequest());
   }
 }

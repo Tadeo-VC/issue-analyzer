@@ -3,10 +3,7 @@ import { z } from 'zod';
 export const IntentDataSchema = z.object({
     intention: z.enum([
       "general_chat",
-      "analyze_issues_priority", 
-      "analyze_complexity",
-      "login_github",
-      "find_repo"
+      "analyze_issues_complexity", 
     ]),
     args: z.record(z.string(), z.any()).default({}) 
   });

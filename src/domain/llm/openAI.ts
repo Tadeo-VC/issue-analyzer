@@ -3,6 +3,7 @@ import { ClientLLM } from "./clientLLM";
 import { LLMMessage } from "./llmMessage";
 import { Tool } from "openai/resources/responses/responses.js";
 import { IntentData, IntentDataSchema } from "./intentData";
+import { OpenAIError } from "../errors";
 
 export class OpenAILLM extends ClientLLM{
     
@@ -37,7 +38,7 @@ export class OpenAILLM extends ClientLLM{
     try {
       response = await this.client.responses.create(requestBody);
     } catch (error) {
-      throw new Error(`Failed to send request`);
+      throw new OpenAIError(`Failed to send request`);
     }
     
     const text = response.output_text?.[0]; 
@@ -46,13 +47,13 @@ export class OpenAILLM extends ClientLLM{
     try {
       json = JSON.parse(text);
     } catch {
-      throw new Error(`LLM response is not valid JSON: ${text}`);
+      throw new OpenAIError(`LLM response is not valid JSON: ${text}`);
     }
     
     const result = IntentDataSchema.safeParse(json);
     
     if (!result.success) {
-      throw new Error("LLM response does not match IntentData schema");
+      throw new OpenAIError("LLM response does not match IntentData schema");
     }
     
     return result.data;

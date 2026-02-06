@@ -59,3 +59,52 @@ export class OpenAILLM extends ClientLLM{
     return result.data;
   }
 }
+
+// tools 
+export const analyzeIssuesComplexityTool = {
+    type: "function" as const,
+    function: {
+        name: "analyze_issues_complexity" as const,
+        description:
+        "Analyze the complexity of GitHub issues for a repository using predefined heuristics and classify overall complexity.",
+        parameters: {
+        type: "object",
+        properties: {
+            chat_id: {
+            type: "string",
+            description: "Identifier of the existing chat context",
+            },
+            user: {
+            type: "string",
+            description: "GitHub username or organization",
+            },
+            repo: {
+            type: "string",
+            description: "GitHub repository name",
+            },
+        },
+        required: ["chat_id", "user", "repo"],
+        additionalProperties: false,
+        },
+    },
+};
+
+export const persistChatTool = {
+    type: "function" as const,
+    function: {
+        name: "persist_chat" as const,
+        description:
+        "Persist the current state of an existing chat into permanent storage.",
+        parameters: {
+        type: "object",
+        properties: {
+            chat_id: {
+            type: "string",
+            description: "Identifier of the chat to persist",
+            },
+        },
+        required: ["chat_id"],
+        additionalProperties: false,
+        },
+    },
+};

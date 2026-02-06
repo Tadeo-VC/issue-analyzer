@@ -143,7 +143,7 @@ export class ChatSupabaseRepository {
         this.mapMessageFromRow(msg)
       ) || [];
 
-      chats.push(this.mapChatFromRow(chatRow, messages));
+      chats.push(await this.mapChatFromRow(chatRow, messages));
     }
 
     return chats;
@@ -192,7 +192,7 @@ export class ChatSupabaseRepository {
     }
   }
 
-  async findUserById(userId: string): Promise<User | null> {
+  async findUserById(userId: string): Promise<User> {
     const { data, error } = await this.supabase
       .from(this.usersTable)
       .select("*")
@@ -200,24 +200,20 @@ export class ChatSupabaseRepository {
       .single();
 
     if (error) {
-      if ((error as any).code === "PGRST116") {
-        return null;
-      }
       throw new Error(`Failed to fetch user: ${error.message}`);
     }
 
     if (!data) {
-      return null;
+      throw new Error(`User with id ${userId} not found`);
     }
 
     return this.mapUserFromRow(data as UserRow);
   }
 
-  private mapChatFromRow(row: ChatRow, messages: Message[]): Chat {
-    // Create a minimal User object from userId (without loading full user data)
-    const user = new User("", "", "", row.user_id); // Placeholder - adjust based on your needs
+  private async mapChatFromRow(row: ChatRow, messages: Message[]): Promise<Chat> {
+
     // Note: Agent is intentionally not persisted (transient)
-    return new Chat(row.title, messages, user, null as any, row.id);
+    return new Chat(row.title, messages, await this.findUserById(row.user_id), null as any, row.id);
   }
 
   private mapMessageFromRow(row: MessageRow): Message {

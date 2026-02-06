@@ -43,7 +43,7 @@ interface UserRow {
   updated_at?: string;
 }
 
-export class ChatSupabaseRepository implements DBRepository {
+export class SupabaseRepository implements DBRepository {
   private supabase: SupabaseClient;
   private chatsTable = "chats";
   private messagesTable = "messages";

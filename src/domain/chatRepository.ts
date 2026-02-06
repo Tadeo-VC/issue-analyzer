@@ -1,7 +1,8 @@
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { SupabaseClient } from "@supabase/supabase-js";
 import { Chat } from "./chat";
 import { Message } from "./message";
 import { User } from "./user";
+import { createSupabaseServerClient } from "@/src/utils/supabase/serverClient";
 
 interface ChatRow {
   id: string;
@@ -25,8 +26,8 @@ export class ChatRepository {
   private chatsTable = "chats";
   private messagesTable = "messages";
 
-  constructor(supabaseUrl: string, supabaseKey: string) {
-    this.supabase = createClient(supabaseUrl, supabaseKey);
+  constructor(supabaseClient: SupabaseClient) {
+    this.supabase = supabaseClient;
   }
 
   async saveChat(chat: Chat, userId: string): Promise<string> {

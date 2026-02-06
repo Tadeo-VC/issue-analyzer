@@ -3,8 +3,12 @@ import { GitHostingPlatform } from "../gitHostingPlatform/gitHostingPlatform";
 import { IssueComplexityEvaluator } from "./issueComplexityEvaluator";
 import { IssueSignalsExtractor } from "./issueSignalsExtractor";
 import { DBRepository } from "../../repositories/dbRepository";
-import { ChatMemoryRepository } from "../../repositories/chatMemoryRepository";
+import { ChatContextRepository } from "../../repositories/chatMemoryRepository";
 import { Tool } from "../tool";
+import {
+  ToolArgumentsError,
+  IssueComplexityAnalysisError,
+} from "../../errors";
 
 export class IssueComplexityAnalyzer implements Tool {
 
@@ -22,10 +26,10 @@ export class IssueComplexityAnalyzer implements Tool {
     async call(args: unknown): Promise<string> {
         const result = analyzeIssuesSchema.safeParse(args);
         if (!result.success) {
-            throw new Error("Invalid arguments for analyze_issues_complexity tool");
+            throw new ToolArgumentsError("analyze_issues_complexity");
         }
 
-        const authToken = await ChatMemoryRepository.getInstance()
+        const authToken = await ChatContextRepository.getInstance()
             .then(repo => repo.getUserAuth(result.data.args.chat_id));
 
         const analysis = this.gitHostingPlatform.getRepositoryIssues(authToken, result.data.args.user, result.data.args.repo)
@@ -37,7 +41,7 @@ export class IssueComplexityAnalyzer implements Tool {
                 return analyses;
             })
             .catch(error => {
-                throw new Error(`Failed to analyze issues complexity: ${(error as Error).message}`);
+                throw new IssueComplexityAnalysisError((error as Error).message);
             });
         return JSON.stringify(analysis);
     }
@@ -49,5 +53,5 @@ const analyzeIssuesSchema = z.object({
     chat_id: z.string(),
     repo: z.string(), 
     user: z.string(),
-  })
+  }),
 });

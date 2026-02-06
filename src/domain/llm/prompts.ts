@@ -10,7 +10,7 @@ Return ONLY a valid JSON object:
 
 {
   "intention": "<tool | none>",
-  "args": {}
+  "args": {<tool-args>}
 }
 
 Few-shot examples:
@@ -19,21 +19,21 @@ User: "Analizá la complejidad de los issues"
 Output:
 {
   "intention": "analyze_issues_complexity",
-  "args": {}
+  "args": {<tool-args>}
 }
 
 User: "Guardá este chat"
 Output:
 {
   "intention": "persist_chat",
-  "args": {}
+  "args": {<tool-args>}
 }
 
 User: "Hola!"
 Output:
 {
   "intention": "none",
-  "args": {}
+  "args": {<tool-args>}
 }
 `,
 

@@ -3,6 +3,7 @@ import { GitHostingPlatform } from "../gitHostingPlatform/gitHostingPlatform";
 import { IssueComplexityEvaluator } from "./issueComplexityEvaluator";
 import { IssueSignalsExtractor } from "./issueSignalsExtractor";
 import { DBRepository } from "../../repositories/dbRepository";
+import { ChatMemoryRepository } from "../../repositories/chatMemoryRepository";
 
 export class IssueComplexityAnalyzer {
 
@@ -10,26 +11,27 @@ export class IssueComplexityAnalyzer {
     private issueComplexityEvaluator: IssueComplexityEvaluator;
     private issueSignalsExtractor: IssueSignalsExtractor;
     private gitHostingPlatform: GitHostingPlatform;
-    private dbRepository: DBRepository;
 
     constructor(gitHostingPlatform: GitHostingPlatform, dbRepository: DBRepository) {
         this.issueComplexityEvaluator = new IssueComplexityEvaluator();
         this.issueSignalsExtractor = new IssueSignalsExtractor();
         this.gitHostingPlatform = gitHostingPlatform;
-        this.dbRepository = dbRepository;
     }
 
     name(): string {
         return this.toolName;
     }
 
-    call(args: unknown): Promise<string> {
+    async call(args: unknown): Promise<string> {
         const result = analyzeIssuesSchema.safeParse(args);
         if (!result.success) {
             throw new Error("Invalid arguments for analyze_issues_complexity tool");
         }
 
-        this.gitHostingPlatform.getRepositoryIssues(, result.data.args.user, result.data.args.repo)
+        const authToken = await ChatMemoryRepository.getInstance()
+            .then(repo => repo.getUserAuth(result.data.args.chat_id));
+
+        const analysis = this.gitHostingPlatform.getRepositoryIssues(authToken, result.data.args.user, result.data.args.repo)
             .then(issues => {
                 const analyses = issues.map(issue => {
                     const signals = this.issueSignalsExtractor.extract(issue);
@@ -38,14 +40,16 @@ export class IssueComplexityAnalyzer {
                 return analyses;
             })
             .catch(error => {
-                console.error("Error fetching issues:", error);
+                throw new Error(`Failed to analyze issues complexity: ${(error as Error).message}`);
             });
+        return JSON.stringify(analysis);
     }
 }    
 
 const analyzeIssuesSchema = z.object({
   intention: z.literal("analyze_issues_complexity"), // solo acepta esta intención
   args: z.object({
+    chat_id: z.string(),
     repo: z.string(), 
     user: z.string(),
   })

@@ -8,7 +8,7 @@ import z from "zod";
 
 export abstract class ClientLLM {
 
-  async generateResponse(chat: Chat){
+  async generateResponse(chat: Chat) {
 
     const llmResponse: IntentData = await this.sendRequest(
       this.buildPrompt(SystemPrompt.FIND_USER_INTENTIONS),
@@ -16,7 +16,7 @@ export abstract class ClientLLM {
       this.buildLastMessage(chat)
     );
     
-    const zodLlmResponse = llmToolCallingSchema.safeParse([llmResponse]);
+    const zodLlmResponse = multiToolCallSchema.safeParse([llmResponse]);
     if (!zodLlmResponse.success) {
       throw new ClientLLMException(`Invalid LLM response: ${zodLlmResponse.error.message}`);
     }
@@ -34,18 +34,21 @@ export abstract class ClientLLM {
     return this.callTools(jsonLlmResponse, chat);
   }
 
-  private async callTools(tools: LlmToolCalling, chat: Chat) {
+  private async callTools(tools: MultiToolCall, chat: Chat) {
     
   }
 }
-const llmToolCallingSchema = z.array(
-  z.object({
-    intention: z.enum([Intention.ANALYZE_ISSUES_COMPLEXITY, Intention.PERSIST_CHAT, Intention.GENERAL_CHAT]),
-    args: z.record(z.string(), z.unknown())
-  })
-);
 
-type LlmToolCalling = z.infer<typeof llmToolCallingSchema>;
+const toolCallSchema = z.object({
+  intention: z.enum([Intention.ANALYZE_ISSUES_COMPLEXITY, Intention.PERSIST_CHAT, Intention.GENERAL_CHAT]),
+  args: z.record(z.string(), z.unknown())
+});
+
+type ToolCall = z.infer<typeof toolCallSchema>;
+
+const multiToolCallSchema = z.array(toolCallSchema);
+
+type MultiToolCall = z.infer<typeof multiToolCallSchema>;
 
 export class ClientLLMException extends Error {
   constructor(message: string) {

@@ -3,9 +3,7 @@ import { GenerateResult, ToolCallResult, ResponseResult } from "./generateResult
 import { IntentData } from "./intentData";
 import { Intention, LLMMessage, LLMRole } from "./llmMessage";
 import { SystemPrompt } from "./prompts";
-import { UnsupportedIntentionError } from "../errors";
 import z from "zod";
-
 export abstract class ClientLLM {
 
   async generateResponse(chat: Chat) {
@@ -34,11 +32,26 @@ export abstract class ClientLLM {
     return this.callTools(jsonLlmResponse, chat);
   }
 
-  private async callTools(tools: MultiToolCall, chat: Chat) {
+  private callTools(tools: MultiToolCall, chat: Chat) {
+    const toolResults = tools.forEach(tool => {this.generateToolResponse(tool, chat)});
     
   }
-}
 
+  private generateToolResponse(toolCall: ToolCall, chat: Chat) {
+    
+    let handler: ToolInvocatorHandler;
+    switch (toolCall.intention) {
+      case Intention.ANALYZE_ISSUES_COMPLEXITY:
+        handler = new IssueComplexityAnalyzerHandler(toolCall.args, chat);
+      case Intention.PERSIST_CHAT:
+        handler = new PersistChatHandler(chat);
+      default: 
+        throw new ClientLLMException(`Unsupported intention: ${toolCall.intention}`);
+    }
+
+    return handler.handle();
+  }
+}
 const toolCallSchema = z.object({
   intention: z.enum([Intention.ANALYZE_ISSUES_COMPLEXITY, Intention.PERSIST_CHAT, Intention.GENERAL_CHAT]),
   args: z.record(z.string(), z.unknown())

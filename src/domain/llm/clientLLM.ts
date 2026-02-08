@@ -31,7 +31,12 @@ export abstract class ClientLLM {
 
     const toolResults: MultiToolResponse = await this.callTools(jsonLlmResponse, chat);
 
+    const explainResultsPrompt: CanonicalLLMMessagesage = this.buildPrompt(SystemPrompt.EXPLAIN_TOOL_RESULTS);
+    const toolResultsMessages: CanonicalLLMMessagesage = this.buildToolResultsMessage(toolResults);
 
+    const finalResponse = await this.sendRequest([explainResultsPrompt, toolResultsMessages, ...chatHistory]);
+
+    return finalResponse;
   }
 
   protected async callTools(tools: MultiToolCall, chat: Chat): Promise<MultiToolResponse> {
@@ -97,6 +102,13 @@ export abstract class ClientLLM {
     });
 
     return history;
+  }
+
+  protected buildToolResultsMessage(toolResults: MultiToolResponse): CanonicalLLMMessagesage {
+    return new CanonicalLLMMessagesage(
+      LLMRole.ASSISTANT,
+      JSON.stringify(toolResults)
+    );
   }
 }
 

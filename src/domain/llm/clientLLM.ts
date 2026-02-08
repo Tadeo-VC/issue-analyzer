@@ -1,10 +1,10 @@
 import { Chat } from "../chat"
-import { GenerateResult, ToolCallResult, ResponseResult } from "./generateResult";
 import { IntentData } from "./intentData";
-import { Intention, LLMMessage, LLMRole } from "./llmMessage";
 import { SystemPrompt } from "./prompts";
 import z from "zod";
 import { MultiToolResponse, ToolInvoker, ToolResponse } from "../tool/toolInvoker";
+import { Intention } from "./llmMessage";
+import { CanonicalLLMMessagesage, LLMRole } from "./canonicalLlmMessage";
 export abstract class ClientLLM {
 
   async generateResponse(chat: Chat) {
@@ -70,6 +70,28 @@ export abstract class ClientLLM {
     }
     
     return await handler.handle();
+  }
+
+  protected buildPrompt(systemPrompt: SystemPrompt): CanonicalLLMMessagesage {
+    return new CanonicalLLMMessagesage(LLMRole.SYSTEM, systemPrompt);
+  }
+
+  protected buildChatHistory(chat: Chat): CanonicalLLMMessagesage[] {
+    
+    const history: CanonicalLLMMessagesage[] = [];
+    
+    chat.getMessages().forEach(m => {
+      
+      history.push(new CanonicalLLMMessagesage(LLMRole.USER, m.getRequest()));
+      
+      const response = m.getResponse();
+      if(response !== undefined){
+        history.push(new CanonicalLLMMessagesage(LLMRole.ASSISTANT, response));
+      }
+
+    });
+
+    return history;
   }
 }
 
@@ -156,17 +178,6 @@ export class ClientLLMException extends Error {
     latestMessage: LLMMessage
   ): Promise<any>;
 
-  protected buildPrompt(systemPrompt: SystemPrompt): LLMMessage {
-    return new LLMMessage(LLMRole.SYSTEM, systemPrompt);
-  }
 
-  protected buildChatHistory(chat: Chat): LLMMessage[] {
-    return chat.getMessages().map(message => new LLMMessage(LLMRole.USER, message.getRequest()));
-  }
-
-  protected buildLastMessage(chat: Chat): LLMMessage {
-    const lastMessage = chat.getMessages()[chat.getMessages().length - 1];
-    return new LLMMessage(LLMRole.USER, lastMessage.getRequest());
-  }
 }
 */

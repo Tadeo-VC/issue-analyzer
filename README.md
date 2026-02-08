@@ -1,4 +1,4 @@
-# Nombre del Proyecto
+# Issue Analyzer
 
 > Chat web de inteligencia artificial que analiza la complejidad de issues de GitHub para ayudar a desarrolladores a entender y priorizar el trabajo en sus proyectos.
 

@@ -4,6 +4,7 @@ import { IntentData } from "./intentData";
 import { Intention, LLMMessage, LLMRole } from "./llmMessage";
 import { SystemPrompt } from "./prompts";
 import z from "zod";
+import { MultiToolResponse, ToolInvoker, ToolResponse } from "../tool/toolInvoker";
 export abstract class ClientLLM {
 
   async generateResponse(chat: Chat) {
@@ -32,24 +33,43 @@ export abstract class ClientLLM {
     return this.callTools(jsonLlmResponse, chat);
   }
 
-  private callTools(tools: MultiToolCall, chat: Chat) {
-    const toolResults = tools.forEach(tool => {this.generateToolResponse(tool, chat)});
-    
-  }
+  private async callTools(tools: MultiToolCall, chat: Chat): Promise<MultiToolResponse> {
+    const toolResults: MultiToolResponse = [];
+    for (const tool of tools) {
+      try {
+      toolResults.push(await this.generateToolResponse(tool, chat));
+      } catch (error) {
 
-  private generateToolResponse(toolCall: ToolCall, chat: Chat) {
+        const errorResponse: ToolResponse = {
+            status: "error",
+            message: "The requested operation could not be completed",
+            error: {
+              code: "TOOL_EXECUTION_FAILED",
+            }
+        }
+
+        toolResults.push(errorResponse);
+        return toolResults
+      }
+    }
+
+    return toolResults;
+  }
+  private async generateToolResponse(toolCall: ToolCall, chat: Chat): Promise<ToolResponse> {
     
-    let handler: ToolInvocatorHandler;
+    let handler: ToolInvoker;
     switch (toolCall.intention) {
       case Intention.ANALYZE_ISSUES_COMPLEXITY:
         handler = new IssueComplexityAnalyzerHandler(toolCall.args, chat);
+        break
       case Intention.PERSIST_CHAT:
         handler = new PersistChatHandler(chat);
+        break
       default: 
         throw new ClientLLMException(`Unsupported intention: ${toolCall.intention}`);
     }
-
-    return handler.handle();
+    
+    return await handler.handle();
   }
 }
 const toolCallSchema = z.object({

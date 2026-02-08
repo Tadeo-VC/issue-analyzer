@@ -33,7 +33,7 @@ export abstract class ClientLLM {
     return this.callTools(jsonLlmResponse, chat);
   }
 
-  private async callTools(tools: MultiToolCall, chat: Chat): Promise<MultiToolResponse> {
+  protected async callTools(tools: MultiToolCall, chat: Chat): Promise<MultiToolResponse> {
     const toolResults: MultiToolResponse = [];
     for (const tool of tools) {
       try {
@@ -55,7 +55,7 @@ export abstract class ClientLLM {
 
     return toolResults;
   }
-  private async generateToolResponse(toolCall: ToolCall, chat: Chat): Promise<ToolResponse> {
+  protected async generateToolResponse(toolCall: ToolCall, chat: Chat): Promise<ToolResponse> {
     
     let handler: ToolInvoker;
     switch (toolCall.intention) {
@@ -72,6 +72,8 @@ export abstract class ClientLLM {
     return await handler.handle();
   }
 }
+
+
 const toolCallSchema = z.object({
   intention: z.enum([Intention.ANALYZE_ISSUES_COMPLEXITY, Intention.PERSIST_CHAT, Intention.GENERAL_CHAT]),
   args: z.record(z.string(), z.unknown())

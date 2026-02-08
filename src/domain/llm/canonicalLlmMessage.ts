@@ -1,4 +1,4 @@
-import { EasyInputMessage, ResponseInputItem } from "openai/resources/responses/responses.js";
+import { EasyInputMessage } from "openai/resources/responses/responses.js";
 
 export enum Intention {
     ANALYZE_ISSUES_COMPLEXITY = "analyze_issues_complexity",
@@ -12,23 +12,21 @@ export enum LLMRole {
   ASSISTANT = "assistant",
 }
 
-export class LLMMessage {
+export class CanonicalLLMMessagesage {
   private role: LLMRole;
   private content: string;
-  private id: string;
 
   constructor(
-    role: LLMRole,  // Public para acceso directo
+    role: LLMRole, 
     content: string,
   ) {
     this.role = role;
     this.content = content;
-    this.id = `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
   
   toOpenAIFormat(): EasyInputMessage {
     return {
-      role: this.role as "user" | "system" | "assistant" ,             
+      role: this.role as LLMRole.ASSISTANT | LLMRole.USER | LLMRole.SYSTEM ,             
       content: [
         {
           type: "input_text",      

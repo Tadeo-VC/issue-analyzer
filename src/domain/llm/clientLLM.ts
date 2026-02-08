@@ -9,11 +9,10 @@ export abstract class ClientLLM {
 
   async generateResponse(chat: Chat) {
 
-    const llmResponse: IntentData = await this.sendRequest(
-      this.buildPrompt(SystemPrompt.FIND_USER_INTENTIONS),
-      this.buildChatHistory(chat),
-      this.buildLastMessage(chat)
-    );
+    const findIntentionPrompt: CanonicalLLMMessagesage = this.buildPrompt(SystemPrompt.FIND_USER_INTENTIONS);
+    const chatHistory: CanonicalLLMMessagesage[] = this.buildChatHistory(chat);
+
+    const llmResponse= await this.sendRequest([findIntentionPrompt, ...chatHistory]);
     
     const zodLlmResponse = multiToolCallSchema.safeParse([llmResponse]);
     if (!zodLlmResponse.success) {
@@ -30,7 +29,9 @@ export abstract class ClientLLM {
       // pasamos directamente la respuesta del llm al usuario, sin pasar por el sistema de herramientas
     } 
 
-    return this.callTools(jsonLlmResponse, chat);
+    const toolResults: MultiToolResponse = await this.callTools(jsonLlmResponse, chat);
+
+
   }
 
   protected async callTools(tools: MultiToolCall, chat: Chat): Promise<MultiToolResponse> {
@@ -71,6 +72,10 @@ export abstract class ClientLLM {
     
     return await handler.handle();
   }
+
+  protected abstract sendRequest(
+    messages: CanonicalLLMMessagesage[]
+  ): Promise<>;
 
   protected buildPrompt(systemPrompt: SystemPrompt): CanonicalLLMMessagesage {
     return new CanonicalLLMMessagesage(LLMRole.SYSTEM, systemPrompt);

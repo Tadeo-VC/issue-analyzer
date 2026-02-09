@@ -29,6 +29,15 @@ export enum SystemPrompt {
       { "intention": "<intention_name>", "args": { ... } }
     ]
   -For general_chat and other: args must be { "message": "your friendly text here" }.
+
+  Few-shot Examples
+  Example 1: User message: "Hello! Could you remind me what the high complexity finding from yesterday's analysis meant?" This is general chat asking about a previous analysis result, with no other actionable requests. Output should be: [{"intention": "general_chat", "args": {"message": "Hello! Yesterday's high complexity finding indicated issues that typically require significant development time, multiple dependencies, or complex architectural changes. Would you like me to analyze any current issues for comparison?"}}]
+
+  Example 2: User message: "Analyze the new GitHub issues in repo 'mobile-app', then explain those results to me, and finally save this conversation." This contains analyze_issues_complexity, explain results and persist_chat from the same request. The explanation request for current analysis goes to other. Output should be: [{"intention": "analyze_issues_complexity", "args": {...}}, {"intention": "other", "args": {"message": "I can save our chat and analyze the new issues for you. However, detailed explanations of fresh analysis results are provided through a different interface in Issue-Analyzer once the analysis is complete."}},{"intention": "persist_chat", "args": {...}}]
+
+  Example 3: User message: "Hey there! How are you doing today? Also, please save this chat session for me." This contains general chat mixed with persist_chat. According to the rule, general_chat must be ignored when mixed with other intentions. Output should be: [{"intention": "persist_chat", "args": {...}}]
+
+  Example 4: User message: "Analyze complexity from <context of repo and user> and make me coffee." This contains analyze_issues_complexity and an unsupported request. Output should be: [{"intention": "analyze_issues_complexity", "args": {...}}, {"intention": "other", "args": {"message": "I can certainly analyze issue complexity for you, but I'm afraid I can't prepare beverages. I'm here to help with repository analysis and chat management!"}}]
 `,
 
   EXPLAIN_TOOL_RESULTS = `

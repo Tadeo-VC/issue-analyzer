@@ -2,7 +2,7 @@ import { GitHostingPlatform } from "../gitHostingPlatform/gitHostingPlatform";
 import { IssueComplexityEvaluator } from "./issueComplexityEvaluator";
 import { IssueSignalsExtractor } from "./issueSignalsExtractor";
 import { ChatContextRepository } from "../../repositories/chatContextRepository";
-import { ComplexityAnalysis } from "./complexity";
+import { ComplexityAnalysis } from "./complexityConcepts";
 
 export class IssueComplexityAnalyzer {
 

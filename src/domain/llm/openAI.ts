@@ -64,20 +64,16 @@ export const analyzeIssuesComplexityTool = {
         parameters: {
         type: "object",
         properties: {
-            chat_id: {
+            repo: {
             type: "string",
-            description: "Identifier of the existing chat context",
+            description: "GitHub repository name",
             },
             user: {
             type: "string",
             description: "GitHub username or organization",
             },
-            repo: {
-            type: "string",
-            description: "GitHub repository name",
-            },
         },
-        required: ["chat_id", "user", "repo"],
+        required: ["chat_id", "repo"],
         additionalProperties: false,
         },
     },

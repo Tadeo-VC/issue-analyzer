@@ -55,7 +55,7 @@ export class OpenAILLM extends ClientLLM{
 }
 
 // tools 
-export const analyzeIssuesComplexityTool = {
+export const issuesComplexityAnalyzerTool = {
     type: "function" as const,
     function: {
         name: "analyze_issues_complexity" as const,
@@ -87,13 +87,8 @@ export const persistChatTool = {
         "Persist the current state of an existing chat into permanent storage.",
         parameters: {
         type: "object",
-        properties: {
-            chat_id: {
-            type: "string",
-            description: "Identifier of the chat to persist",
-            },
-        },
-        required: ["chat_id"],
+        properties: {},
+        required: [],
         additionalProperties: false,
         },
     },

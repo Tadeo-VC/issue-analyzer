@@ -12,7 +12,7 @@ export class PersistChat {
             chatContextRepository.persistChat(chatId);
             return {
                 status: "success",
-                message: `Chat persisted successfully with ID ${chatId}`,
+                message: `Chat persisted successfully`,
                 data: {}
             };
         } catch (error) {

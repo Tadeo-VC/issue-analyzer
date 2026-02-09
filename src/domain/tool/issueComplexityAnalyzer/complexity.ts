@@ -1,28 +1,38 @@
-export enum Level {
-  LOW = "LOW",
-  MEDIUM = "MEDIUM",
-  HIGH = "HIGH",
-}
+import { z } from "zod";
 
-export interface ComplexityCriteria {
-  clarity: Level;
-  uncertainty: Level;
-  scope: Level;
-  design: Level;
-  dependencies: Level;
-  testability: Level;
-}
+// Enum Level como literal
+export const LevelSchema = z.enum(["LOW", "MEDIUM", "HIGH"]);
 
-export interface ComplexityAnalysis {
-  complexity: Level;
-  criteria: ComplexityCriteria;
-}
+export type Level = z.infer<typeof LevelSchema>;
 
-export interface IssueSignals {
-  hasAmbiguousDescription: boolean;
-  requiresResearch: boolean;
-  affectsMultipleComponents: boolean;
-  requiresDesignDecisions: boolean;
-  hasExternalDependencies: boolean;
-  unclearCompletionCriteria: boolean;
-}
+// IssueSignals schema
+export const IssueSignalsSchema = z.object({
+  hasAmbiguousDescription: z.boolean(),
+  requiresResearch: z.boolean(),
+  affectsMultipleComponents: z.boolean(),
+  requiresDesignDecisions: z.boolean(),
+  hasExternalDependencies: z.boolean(),
+  unclearCompletionCriteria: z.boolean(),
+});
+
+export type IssueSignals = z.infer<typeof IssueSignalsSchema>;
+
+// ComplexityCriteria schema
+export const ComplexityCriteriaSchema = z.object({
+  clarity: LevelSchema,
+  uncertainty: LevelSchema,
+  scope: LevelSchema,
+  design: LevelSchema,
+  dependencies: LevelSchema,
+  testability: LevelSchema,
+});
+
+export type ComplexityCriteria = z.infer<typeof ComplexityCriteriaSchema>;
+
+// ComplexityAnalysis schema
+export const ComplexityAnalysisSchema = z.object({
+  complexity: LevelSchema,
+  criteria: ComplexityCriteriaSchema,
+});
+
+export type ComplexityAnalysis = z.infer<typeof ComplexityAnalysisSchema>;

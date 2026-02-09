@@ -20,16 +20,16 @@ export const ChatContextSchema = z.object({
   authToken: z.string(),
 });
 
-export class ChatMemoryRepository {
+export class ChatContextRepository {
     private chats: Map<string, ChatContext>;
     private dbRepository: DBRepository;
-    private static instance: ChatMemoryRepository;
+    private static instance: ChatContextRepository;
     private ttlMs = 30 * 60 * 1000; // 30 minutes, time to live minutes
     private timers: Map<string, NodeJS.Timeout>;
 
-    public static async getInstance(): Promise<ChatMemoryRepository> {
+    public static async getInstance(): Promise<ChatContextRepository> {
         if (!this.instance) {
-            this.instance = new ChatMemoryRepository(new SupabaseRepository(await createSupabaseServerClient()));
+            this.instance = new ChatContextRepository(new SupabaseRepository(await createSupabaseServerClient()));
         }
         return this.instance;
     }

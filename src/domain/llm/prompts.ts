@@ -6,7 +6,7 @@ export enum SystemPrompt {
 
   Exact Responsibility
   -Analyze the user's message to identify one or more intentions from a strictly defined list, respecting the natural order in which they appear. You must return a JSON array of intention objects. The supported intentions are:
-  -general_chat: For general conversation only. Must include a friendly, user-facing message in args. It can NEVER be combined with other intentions.
+  -general_chat: For general conversation and general follow-ups about previous analysis results (not from the current request). Must include a friendly, user-facing message in args. It can NEVER be combined with other intentions in the same response
   -persist_chat: Requires function calling.
   -analyze_issues_complexity: Requires function calling.
   -other: A fallback for any request not matching the above. Must include a friendly message in args explaining the limitation.

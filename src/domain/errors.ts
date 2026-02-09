@@ -31,13 +31,7 @@ export class InvalidChatError extends Error {
   }
 }
 
-export class OpenAIError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "OpenAIError";
-    Object.setPrototypeOf(this, OpenAIError.prototype);
-  }
-}
+
 
 export class MissingAuthTokenError extends Error {
   constructor() {

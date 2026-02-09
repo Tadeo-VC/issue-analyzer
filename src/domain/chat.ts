@@ -1,20 +1,20 @@
 import { Message } from "./message";
 import { User } from "./user";
-import { Agent } from "./agent";
+import { ClientLLM } from "./llm/clientLLM";
 export class Chat {
 
   private id: string;
   private title: string;
   private messages: Message[];
   private user: User;
-  private agent: Agent;
+  private llm: ClientLLM;
 
-  constructor(title: string, messages: Message[], user: User, agent: Agent, id: string) {
+  constructor(title: string, messages: Message[], user: User, llm: ClientLLM, id: string) {
     this.id = id || this.generateId();
     this.title = title;
     this.messages = messages;
     this.user = user;
-    this.agent = agent;
+    this.llm = llm;
   }
 
   private generateId(): string {
@@ -28,24 +28,29 @@ export class Chat {
   }
 
   async sendMessage(chat: Chat): Promise<void> {
-    const response = await this.agent.receiveMessage(chat);
-  }
-
-  userInput(): string {
-    return this.messages[this.messages.length - 1].getRequest()
+    const response = await this.llm.generateResponse(chat);
+    const lastMessage = this.messages[this.messages.length - 1];
+    lastMessage.receiveResponse(response);
   }
 
   lastUserMessages(): string[] {
-    return this.lastTenMessages(this.messages).map(m => m.getRequest());
+    const userMessages: string[] = [];
+    for (let i = this.messages.length - 1; i >= 0 && userMessages.length < 10; i--) {
+      userMessages.unshift(this.messages[i].getRequest());
+    }
+    return userMessages;
   }
   
   lastAssistantMessages(): string[] {
-    return this.lastTenMessages(this.messages).map(m => m.getResponse());
+    const assistantMessages: string[] = [];
+    for (let i = this.messages.length - 1; i >= 0 && assistantMessages.length < 10; i--) {
+      const message = this.messages[i];
+      if (message.hasResponse()) {
+        assistantMessages.unshift(message.getResponse()!);
+      }
+    }
+    return assistantMessages;
   }  
-
-  private lastTenMessages(messages: Message[]): Message[] {
-    return this.messages.slice(-10);
-  }
 
   getTitle(): string {
     return this.title;
@@ -59,8 +64,8 @@ export class Chat {
     return this.user;
   }
 
-  getAgent(): Agent {
-    return this.agent;
+  getLlm(): ClientLLM {
+    return this.llm;
   }
 
   getId(): string {

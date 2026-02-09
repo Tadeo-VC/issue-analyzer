@@ -15,12 +15,7 @@ export class Message {
     this.responseState = ResponseState.SUCCESS;
   }
 
-  getResponse(): string {
-
-    if(!this.response){
-      throw new MessageResponseNotFoundError();
-    }
-
+  getResponse(): string | undefined {
     return this.response;
   }
 

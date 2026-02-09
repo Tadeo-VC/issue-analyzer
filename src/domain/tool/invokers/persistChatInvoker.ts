@@ -12,6 +12,22 @@ export class PersistChatInvoker implements ToolInvoker {
     }
 
     async invoke(): Promise<ToolResponse> {
-        return this.tool.call(this.chat.getId());
+        try {
+            this.tool.call(this.chat.getId());
+        } catch (error) {
+            return {
+                status: "error",
+                message: "Failed to persist chat",
+                error: {
+                    details: (error as Error).message
+                }
+            };
+        }
+        
+        return {
+            status: "success",
+            message: `Chat persisted successfully`,
+            data: {}
+        };
     }
 }

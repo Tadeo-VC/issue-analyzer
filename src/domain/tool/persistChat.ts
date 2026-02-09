@@ -6,23 +6,8 @@ export class PersistChat {
 
     constructor() {}
 
-    async call(chatId: string): Promise<ToolResponse> {
-        const chatContextRepository = await ChatContextRepository.getInstance();
-        try {
-            chatContextRepository.persistChat(chatId);
-            return {
-                status: "success",
-                message: `Chat persisted successfully`,
-                data: {}
-            };
-        } catch (error) {
-            return {
-                status: "error",
-                message: "Failed to persist chat",
-                error: {
-                    details: (error as Error).message
-                }
-            };
-        }
+    async call(chatId: string): Promise<void> {
+        const repo = await ChatContextRepository.getInstance();
+        repo.persistChat(chatId)
     }
 }

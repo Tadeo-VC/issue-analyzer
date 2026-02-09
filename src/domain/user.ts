@@ -9,6 +9,10 @@ export class User {
     this.id = id;
   }
 
+  getName(): string {
+    return this.name;
+  }
+
   getId(): string {
     return this.id;
   }

@@ -1,38 +1,26 @@
-import z from "zod";
 import { GitHostingPlatform } from "../gitHostingPlatform/gitHostingPlatform";
 import { IssueComplexityEvaluator } from "./issueComplexityEvaluator";
 import { IssueSignalsExtractor } from "./issueSignalsExtractor";
-import { DBRepository } from "../../repositories/dbRepository";
 import { ChatContextRepository } from "../../repositories/chatContextRepository";
-import { Tool } from "../tool";
-import {
-  ToolArgumentsError,
-  IssueComplexityAnalysisError,
-} from "../../errors";
+import { ComplexityAnalysis } from "./complexity";
 
-export class IssueComplexityAnalyzer implements Tool {
+export class IssueComplexityAnalyzer {
 
-    readonly name = "analyze_issues_complexity";
     private issueComplexityEvaluator: IssueComplexityEvaluator;
     private issueSignalsExtractor: IssueSignalsExtractor;
     private gitHostingPlatform: GitHostingPlatform;
 
-    constructor(gitHostingPlatform: GitHostingPlatform, dbRepository: DBRepository) {
-        this.issueComplexityEvaluator = new IssueComplexityEvaluator();
-        this.issueSignalsExtractor = new IssueSignalsExtractor();
+    constructor(issueComplexityEvaluator: IssueComplexityEvaluator, issueSignalsExtractor: IssueSignalsExtractor, gitHostingPlatform: GitHostingPlatform) {
+        this.issueComplexityEvaluator = issueComplexityEvaluator;
+        this.issueSignalsExtractor = issueSignalsExtractor;
         this.gitHostingPlatform = gitHostingPlatform;
     }
 
-    async call(args: unknown): Promise<string> {
-        const result = AnalyzeIssuesComplexityResultSchema.safeParse(args);
-        if (!result.success) {
-            throw new ToolArgumentsError("analyze_issues_complexity");
-        }
+    async call(chatId: string, repo: string, user: string): Promise<ComplexityAnalysis[]> {
 
-        const authToken = await ChatContextRepository.getInstance()
-            .then(repo => repo.getUserAuth(result.data.chatId));
+        const authToken = await ChatContextRepository.getInstance().then(repo => repo.getUserAuth(chatId));
 
-        const analysis = this.gitHostingPlatform.getRepositoryIssues(authToken, result.data.result.args.user, result.data.result.args.repo)
+        const analysis = this.gitHostingPlatform.getRepositoryIssues(authToken, user, repo)
             .then(issues => {
                 const analyses = issues.map(issue => {
                     const signals = this.issueSignalsExtractor.extract(issue);
@@ -41,19 +29,15 @@ export class IssueComplexityAnalyzer implements Tool {
                 return analyses;
             })
             .catch(error => {
-                throw new IssueComplexityAnalysisError((error as Error).message);
+                throw new IssueComplexityAnalyzerException((error as Error).message);
             });
-        return JSON.stringify(analysis);
+        return analysis;
     }
 }    
 
-export const AnalyzeIssuesComplexityResultSchema = z.object({
-  chatId: z.string(),
-  result: z.object({
-    intention: z.literal("analyze_issues_complexity"),
-    args: z.object({
-      repo: z.string(),
-      user: z.string(),
-    }),
-  }),
-});
+class IssueComplexityAnalyzerException extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = "IssueComplexityAnalyzerException";
+    }
+}

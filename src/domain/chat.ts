@@ -52,6 +52,10 @@ export class Chat {
     return assistantMessages;
   }  
 
+  getUserName(): string {
+    return this.user.getName();
+  }
+
   getTitle(): string {
     return this.title;
   }

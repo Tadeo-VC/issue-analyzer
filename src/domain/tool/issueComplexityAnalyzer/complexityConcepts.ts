@@ -1,9 +1,13 @@
 import { z } from "zod";
 
 // Enum Level como literal
-export const LevelSchema = z.enum(["LOW", "MEDIUM", "HIGH"]);
+export enum Level {
+  LOW = "LOW",
+  MEDIUM = "MEDIUM",
+  HIGH = "HIGH",
+}
 
-export type Level = z.infer<typeof LevelSchema>;
+export const LevelSchema = z.nativeEnum(Level);
 
 // IssueSignals schema
 export const IssueSignalsSchema = z.object({

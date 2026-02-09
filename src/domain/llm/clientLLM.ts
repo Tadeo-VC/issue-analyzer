@@ -5,6 +5,11 @@ import { MultiToolResponse, ToolInvoker, ToolResponse } from "../tool/invokers/t
 import { CanonicalLLMMessage, Intention, LLMRole } from "./canonicalLlmMessage";
 import { PersistChatInvoker } from "../tool/invokers/persistChatInvoker";
 import { PersistChat } from "../tool/persistChat";
+import { ComplexityAnalyzerInvoker } from "../tool/invokers/complexityAnalyzerInvoker";
+import { IssueComplexityAnalyzer } from "../tool/issueComplexityAnalyzer/issueComplexityAnalyzer";
+import { IssueComplexityEvaluator } from "../tool/issueComplexityAnalyzer/issueComplexityEvaluator";
+import { IssueSignalsExtractor } from "../tool/issueComplexityAnalyzer/issueSignalsExtractor";
+import { GitHubClient } from "../tool/gitHostingPlatform/gitHubClient";
 export abstract class ClientLLM {
 
   async generateResponse(chat: Chat): Promise<string> {
@@ -57,7 +62,7 @@ export abstract class ClientLLM {
     let invoker: ToolInvoker;
     switch (toolCall.intention) {
       case Intention.ANALYZE_ISSUES_COMPLEXITY:
-        invoker = new IssueComplexityAnalyzerInvoker(toolCall.args, chat);
+        invoker = new ComplexityAnalyzerInvoker(chat, toolCall.args, new IssueComplexityAnalyzer(new IssueComplexityEvaluator(), new IssueSignalsExtractor(), new GitHubClient()));
         break
       case Intention.PERSIST_CHAT:
         invoker = new PersistChatInvoker(chat, new PersistChat());

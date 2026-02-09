@@ -1,7 +1,7 @@
 import z from "zod";
 
 export interface ToolInvoker {
-  handle(): Promise<ToolResponse>;
+  invoke(): Promise<ToolResponse>;
 }
 
 const successToolResponseSchema = z.object({

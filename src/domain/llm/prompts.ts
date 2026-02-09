@@ -117,26 +117,5 @@ Output:
     "message": "¡Listo! 😄 El chat se guardó correctamente.\nID del chat: abc123 💾"
   }
 }
-`,
-
-  NOT_LOGGED_IN = `
-The user is attempting to perform an action that requires GitHub authentication 🔐
-
-Return ONLY a valid JSON object:
-
-{
-  "intention": "login_github",
-  "args": {
-    "message": "<friendly explanation>"
-  }
-}
-
-The message should:
-- Be clear and reassuring
-- Explain that GitHub login is required
-- Guide the user on what to do next
-- Use a friendly tone and emojis 😊
-
-Do not return anything outside the JSON.
 `
 }

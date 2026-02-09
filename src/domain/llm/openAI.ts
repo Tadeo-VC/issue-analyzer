@@ -1,9 +1,8 @@
 import OpenAI from "openai";
-import { ClientLLM } from "./clientLLM";
-import { LLMMessage } from "./llmMessage";
+import { ClientLLM, MultiToolCall, multiToolCallSchema } from "./clientLLM";
 import { Tool } from "openai/resources/responses/responses.js";
 import { IntentData, IntentDataSchema } from "./intentData";
-import { OpenAIError } from "../errors";
+import { CanonicalLLMMessage } from "./canonicalLlmMessage";
 
 export class OpenAILLM extends ClientLLM{
     
@@ -18,15 +17,10 @@ export class OpenAILLM extends ClientLLM{
         this.availableTools = tools
     }
 
-    async sendRequest(systemPrompt: LLMMessage, chatMessages: LLMMessage[], lastMessage: LLMMessage): Promise<IntentData> {
-    const apiMessages = [
-      systemPrompt.toOpenAIFormat(),
-      ...chatMessages.flatMap(msg => msg.toOpenAIFormat()),
-      lastMessage.toOpenAIFormat()
-    ];
+    async sendRequest(messages: CanonicalLLMMessage[]): Promise<MultiToolCall> {
     
     const requestBody = {
-      input: apiMessages,
+      input: messages.map(m => m.toOpenAIFormat()),
       tools: this.availableTools,
       model: "gpt-5-mini",
       max_tokens: 1000,
@@ -35,10 +29,11 @@ export class OpenAILLM extends ClientLLM{
       };
    
     let response;
+
     try {
       response = await this.client.responses.create(requestBody);
     } catch (error) {
-      throw new OpenAIError(`Failed to send request`);
+      throw new OpenAIException(`Failed to send request: ${error}`);
     }
     
     const text = response.output_text?.[0]; 
@@ -46,14 +41,14 @@ export class OpenAILLM extends ClientLLM{
     let json: unknown;
     try {
       json = JSON.parse(text);
-    } catch {
-      throw new OpenAIError(`LLM response is not valid JSON: ${text}`);
+    } catch (error) {
+      throw new OpenAIException(`LLM response is not valid JSON: ${text}`);
     }
     
-    const result = IntentDataSchema.safeParse(json);
+    const result = multiToolCallSchema.safeParse(json);
     
     if (!result.success) {
-      throw new OpenAIError("LLM response does not match IntentData schema");
+      throw new OpenAIException(`LLM response does not match MultiToolCall schema: ${result.error.message}`);
     }
     
     return result.data;
@@ -108,3 +103,11 @@ export const persistChatTool = {
         },
     },
 };
+
+class OpenAIException extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "OpenAIException";
+    Object.setPrototypeOf(this, OpenAIException.prototype);
+  }
+}

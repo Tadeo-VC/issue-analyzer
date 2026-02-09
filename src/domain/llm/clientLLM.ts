@@ -1,10 +1,8 @@
 import { Chat } from "../chat"
-import { IntentData } from "./intentData";
 import { SystemPrompt } from "./prompts";
 import z from "zod";
 import { MultiToolResponse, ToolInvoker, ToolResponse } from "../tool/toolInvoker";
-import { Intention } from "./llmMessage";
-import { CanonicalLLMMessage, LLMRole } from "./canonicalLlmMessage";
+import { CanonicalLLMMessage, Intention, LLMRole } from "./canonicalLlmMessage";
 export abstract class ClientLLM {
 
   async generateResponse(chat: Chat) {
@@ -80,7 +78,7 @@ export abstract class ClientLLM {
 
   protected abstract sendRequest(
     messages: CanonicalLLMMessage[]
-  ): Promise<>;
+  ): Promise<MultiToolCall>;
 
   protected buildPrompt(systemPrompt: SystemPrompt): CanonicalLLMMessage {
     return new CanonicalLLMMessage(LLMRole.SYSTEM, systemPrompt);
@@ -120,9 +118,9 @@ const toolCallSchema = z.object({
 
 type ToolCall = z.infer<typeof toolCallSchema>;
 
-const multiToolCallSchema = z.array(toolCallSchema);
+export const multiToolCallSchema = z.array(toolCallSchema);
 
-type MultiToolCall = z.infer<typeof multiToolCallSchema>;
+export type MultiToolCall = z.infer<typeof multiToolCallSchema>;
 
 export class ClientLLMException extends Error {
   constructor(message: string) {

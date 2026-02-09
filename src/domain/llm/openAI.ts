@@ -1,7 +1,6 @@
 import OpenAI from "openai";
 import { ClientLLM, MultiToolCall, multiToolCallSchema } from "./clientLLM";
 import { Tool } from "openai/resources/responses/responses.js";
-import { IntentData, IntentDataSchema } from "./intentData";
 import { CanonicalLLMMessage } from "./canonicalLlmMessage";
 
 export class OpenAILLM extends ClientLLM{

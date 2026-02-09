@@ -12,7 +12,7 @@ export enum LLMRole {
   ASSISTANT = "assistant",
 }
 
-export class CanonicalLLMMessagesage {
+export class CanonicalLLMMessage {
   private role: LLMRole;
   private content: string;
 

@@ -4,13 +4,13 @@ import { SystemPrompt } from "./prompts";
 import z from "zod";
 import { MultiToolResponse, ToolInvoker, ToolResponse } from "../tool/toolInvoker";
 import { Intention } from "./llmMessage";
-import { CanonicalLLMMessagesage, LLMRole } from "./canonicalLlmMessage";
+import { CanonicalLLMMessage, LLMRole } from "./canonicalLlmMessage";
 export abstract class ClientLLM {
 
   async generateResponse(chat: Chat) {
 
-    const findIntentionPrompt: CanonicalLLMMessagesage = this.buildPrompt(SystemPrompt.FIND_USER_INTENTIONS);
-    const chatHistory: CanonicalLLMMessagesage[] = this.buildChatHistory(chat);
+    const findIntentionPrompt: CanonicalLLMMessage = this.buildPrompt(SystemPrompt.FIND_USER_INTENTIONS);
+    const chatHistory: CanonicalLLMMessage[] = this.buildChatHistory(chat);
 
     const llmResponse= await this.sendRequest([findIntentionPrompt, ...chatHistory]);
     
@@ -31,8 +31,8 @@ export abstract class ClientLLM {
 
     const toolResults: MultiToolResponse = await this.callTools(jsonLlmResponse, chat);
 
-    const explainResultsPrompt: CanonicalLLMMessagesage = this.buildPrompt(SystemPrompt.EXPLAIN_TOOL_RESULTS);
-    const toolResultsMessages: CanonicalLLMMessagesage = this.buildToolResultsMessage(toolResults);
+    const explainResultsPrompt: CanonicalLLMMessage = this.buildPrompt(SystemPrompt.EXPLAIN_TOOL_RESULTS);
+    const toolResultsMessages: CanonicalLLMMessage = this.buildToolResultsMessage(toolResults);
 
     const finalResponse = await this.sendRequest([explainResultsPrompt, toolResultsMessages, ...chatHistory]);
 
@@ -79,24 +79,24 @@ export abstract class ClientLLM {
   }
 
   protected abstract sendRequest(
-    messages: CanonicalLLMMessagesage[]
+    messages: CanonicalLLMMessage[]
   ): Promise<>;
 
-  protected buildPrompt(systemPrompt: SystemPrompt): CanonicalLLMMessagesage {
-    return new CanonicalLLMMessagesage(LLMRole.SYSTEM, systemPrompt);
+  protected buildPrompt(systemPrompt: SystemPrompt): CanonicalLLMMessage {
+    return new CanonicalLLMMessage(LLMRole.SYSTEM, systemPrompt);
   }
 
-  protected buildChatHistory(chat: Chat): CanonicalLLMMessagesage[] {
+  protected buildChatHistory(chat: Chat): CanonicalLLMMessage[] {
     
-    const history: CanonicalLLMMessagesage[] = [];
+    const history: CanonicalLLMMessage[] = [];
     
     chat.getMessages().forEach(m => {
       
-      history.push(new CanonicalLLMMessagesage(LLMRole.USER, m.getRequest()));
+      history.push(new CanonicalLLMMessage(LLMRole.USER, m.getRequest()));
       
       const response = m.getResponse();
       if(response !== undefined){
-        history.push(new CanonicalLLMMessagesage(LLMRole.ASSISTANT, response));
+        history.push(new CanonicalLLMMessage(LLMRole.ASSISTANT, response));
       }
 
     });
@@ -104,8 +104,8 @@ export abstract class ClientLLM {
     return history;
   }
 
-  protected buildToolResultsMessage(toolResults: MultiToolResponse): CanonicalLLMMessagesage {
-    return new CanonicalLLMMessagesage(
+  protected buildToolResultsMessage(toolResults: MultiToolResponse): CanonicalLLMMessage {
+    return new CanonicalLLMMessage(
       LLMRole.ASSISTANT,
       JSON.stringify(toolResults)
     );

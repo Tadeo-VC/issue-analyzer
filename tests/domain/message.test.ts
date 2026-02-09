@@ -8,9 +8,9 @@ describe("Message", () => {
     expect(message.getRequest()).toBe(request);
   });
 
-  it("getResponse throws error when no response is set", () => {
+  it("getResponse returns undefined when no response is set", () => {
     const message = new Message("test");
-    expect(() => message.getResponse()).toThrow("The message has no response");
+    expect(message.getResponse()).toBeUndefined();
   });
 
   it("getResponse returns the response after receiveResponse is called", () => {
@@ -18,5 +18,27 @@ describe("Message", () => {
     const response = "Response text";
     message.receiveResponse(response);
     expect(message.getResponse()).toBe(response);
+  });
+
+  it("hasResponse returns false when no response is set", () => {
+    const message = new Message("test");
+    expect(message.hasResponse()).toBe(false);
+  });
+
+  it("hasResponse returns true after receiveResponse is called", () => {
+    const message = new Message("test");
+    message.receiveResponse("response");
+    expect(message.hasResponse()).toBe(true);
+  });
+
+  it("getResponseState returns IDLE when no response is set", () => {
+    const message = new Message("test");
+    expect(message.getResponseState()).toBe("IDLE");
+  });
+
+  it("getResponseState returns SUCCESS after receiveResponse is called", () => {
+    const message = new Message("test");
+    message.receiveResponse("response");
+    expect(message.getResponseState()).toBe("SUCCESS");
   });
 });

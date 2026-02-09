@@ -24,7 +24,7 @@ export abstract class ClientLLM {
     }
 
     if (jsonLlmResponse.length == 1 && jsonLlmResponse[0].intention === Intention.GENERAL_CHAT) {
-      // pasamos directamente la respuesta del llm al usuario, sin pasar por el sistema de herramientas
+      return jsonLlmResponse[0].args.response as string;
     } 
 
     const toolResults: MultiToolResponse = await this.callTools(jsonLlmResponse, chat);

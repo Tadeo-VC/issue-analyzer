@@ -1,4 +1,4 @@
-const AMBIGUITY_PATTERNS: RegExp[] = [
+export const AMBIGUITY_PATTERNS: RegExp[] = [
   /investigate/,
   /seems/,
   /appears/,
@@ -11,7 +11,7 @@ const AMBIGUITY_PATTERNS: RegExp[] = [
   /unknown cause/,
 ];
 
-const RESEARCH_PATTERNS: RegExp[] = [
+export const RESEARCH_PATTERNS: RegExp[] = [
   /spike/,
   /research/,
   /explore/,
@@ -24,7 +24,7 @@ const RESEARCH_PATTERNS: RegExp[] = [
   /technical debt/,
 ];
 
-const SCOPE_PATTERNS: RegExp[] = [
+export const SCOPE_PATTERNS: RegExp[] = [
   /frontend and backend/,
   /full stack/,
   /api and ui/,
@@ -35,7 +35,7 @@ const SCOPE_PATTERNS: RegExp[] = [
   /end[- ]to[- ]end/,
 ];
 
-const DESIGN_PATTERNS: RegExp[] = [
+export const DESIGN_PATTERNS: RegExp[] = [
   /define/,
   /design/,
   /redesign/,
@@ -47,7 +47,7 @@ const DESIGN_PATTERNS: RegExp[] = [
   /proposal/,
 ];
 
-const DEPENDENCY_PATTERNS: RegExp[] = [
+export const DEPENDENCY_PATTERNS: RegExp[] = [
   /blocked by/,
   /depends on/,
   /dependency/,
@@ -57,7 +57,7 @@ const DEPENDENCY_PATTERNS: RegExp[] = [
   /linked issue/,
 ];
 
-const TESTABILITY_PATTERNS: RegExp[] = [
+export const TESTABILITY_PATTERNS: RegExp[] = [
   /no acceptance criteria/,
   /to be validated/,
   /hard to reproduce/,

@@ -1,5 +1,13 @@
 import { Issue } from "../gitHostingPlatform/issue";
 import { IssueSignals } from "./complexityConcepts";
+import {
+  AMBIGUITY_PATTERNS,
+  RESEARCH_PATTERNS,
+  SCOPE_PATTERNS,
+  DESIGN_PATTERNS,
+  DEPENDENCY_PATTERNS,
+  TESTABILITY_PATTERNS,
+} from "./signalsPatterns";
 
 export class IssueSignalsExtractor {
 

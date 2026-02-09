@@ -84,7 +84,7 @@ export abstract class ClientLLM {
 
   protected validateLLMResponse(response: unknown): MultiToolCall {
     
-    const zodResponse = multiToolCallSchema.safeParse([response]);
+    const zodResponse = multiToolCallSchema.safeParse(response);
     if (!zodResponse.success) {
       throw new ClientLLMException(`Invalid LLM response: ${zodResponse.error.message}`);
     }

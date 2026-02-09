@@ -6,8 +6,6 @@ import {
   DatabaseOperationError,
   UserNotFoundError,
 } from "../errors";
-import { th } from "zod/locales";
-import { AgentFactory } from "../factories/agentFactory";
 
 export interface DBRepository {
   saveChat(chat: Chat, userId: string): Promise<void>;
@@ -229,8 +227,8 @@ export class SupabaseRepository implements DBRepository {
   }
 
   private async mapChatFromRow(row: ChatRow, messages: Message[]): Promise<Chat> {
-
-    return new Chat(row.title, messages, await this.findUserById(row.user_id), await AgentFactory.createAgent(), row.id);
+    const { OpenAILLM, issuesComplexityAnalyzerTool, persistChatTool } = await import("../llm/openAI");
+    return new Chat(row.title, messages, await this.findUserById(row.user_id), new OpenAILLM([issuesComplexityAnalyzerTool, persistChatTool]), row.id);
   }
 
   private mapMessageFromRow(row: MessageRow): Message {

@@ -3,7 +3,7 @@ import { GitHostingPlatform } from "../gitHostingPlatform/gitHostingPlatform";
 import { IssueComplexityEvaluator } from "./issueComplexityEvaluator";
 import { IssueSignalsExtractor } from "./issueSignalsExtractor";
 import { DBRepository } from "../../repositories/dbRepository";
-import { ChatContextRepository } from "../../repositories/chatMemoryRepository";
+import { ChatContextRepository } from "../../repositories/chatContextRepository";
 import { Tool } from "../tool";
 import {
   ToolArgumentsError,

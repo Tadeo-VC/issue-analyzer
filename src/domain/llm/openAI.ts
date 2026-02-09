@@ -56,42 +56,40 @@ export class OpenAILLM extends ClientLLM{
 
 // tools 
 export const issuesComplexityAnalyzerTool = {
-    type: "function" as const,
-    function: {
-        name: "analyze_issues_complexity" as const,
-        description:
-        "Analyze the complexity of GitHub issues for a repository using predefined heuristics and classify overall complexity.",
-        parameters: {
-        type: "object",
-        properties: {
-            repo: {
-            type: "string",
-            description: "GitHub repository name",
-            },
-            user: {
-            type: "string",
-            description: "GitHub username or organization",
-            },
+  type: "function" as const,
+  name: "analyze_issues_complexity" as const,
+  description:
+  "Analyze the complexity of GitHub issues for a repository using predefined heuristics and classify overall complexity.",
+  parameters: {
+    type: "object",
+    properties: {
+        repo: {
+        type: "string",
+        description: "GitHub repository name",
         },
-        required: ["chat_id", "repo"],
-        additionalProperties: false,
+        user: {
+        type: "string",
+        description: "GitHub username or organization",
         },
     },
+    required: ["chat_id", "repo"],
+    additionalProperties: false,
+  },
+  strict: true,
 };
 
 export const persistChatTool = {
-    type: "function" as const,
-    function: {
-        name: "persist_chat" as const,
-        description:
-        "Persist the current state of an existing chat into permanent storage.",
-        parameters: {
-        type: "object",
-        properties: {},
-        required: [],
-        additionalProperties: false,
-        },
-    },
+  type: "function" as const,
+  name: "persist_chat" as const,
+  description:
+  "Persist the current state of an existing chat into permanent storage.",
+  parameters: {
+    type: "object",
+    properties: {},
+    required: [],
+    additionalProperties: false,
+  },
+  strict: true,
 };
 
 class OpenAIException extends Error {

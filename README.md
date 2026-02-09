@@ -1,4 +1,4 @@
-# Issue Analyzer
+# Issue Analyzer (Pre refactor)
 
 > Chat web de inteligencia artificial que analiza la complejidad de issues de GitHub para ayudar a desarrolladores a entender y priorizar el trabajo en sus proyectos.
 
@@ -74,7 +74,7 @@ OPENAI_API_KEY = <your-openai-api-key>
 - Integración con Supabase para autenticación y persistencia
 - Integración con GitHub para análisis de issues
 - Validación con Zod para garantizar contratos
-- Diseño orientado a extensibilidad (otros clientesllm, otras aplicaciones de hosting de git, etc)
+- Diseño orientado a extensibilidad (otros clientes`llm`, otras aplicaciones de hosting de git, etc)
 
 ### Frontend
 
@@ -82,19 +82,19 @@ Lamentablemente no logre realizar el trabajo completo en el tiempo estipulado de
 
 ### Dominio
 
-Las entidades principales del modelo son `Chat`,`Agent` y `ClientLLM`. El `Chat` es la entidad persistible que funciona como medio para que los interlocutores `User` y `Agent` se comuniquen. El `Agent` encapsula la logica correspondiente al armado de la response del `ClientLLM` junto a las `Tool`, orquestando la comunicacion entre ellos y manteniendolos desacoplados a traves de las clases de `Generate Results` para enviar a los resultados a las entidades correspondientes. 
+Las entidades principales del modelo son `Chat`,`Agent` y `Client`LLM``. El `Chat` es la entidad persistible que funciona como medio para que los interlocutores `User` y `Agent` se comuniquen. El `Agent` encapsula la logica correspondiente al armado de la response del `Client`LLM`` junto a las `Tool`, orquestando la comunicacion entre ellos y manteniendolos desacoplados a traves de las clases de `Generate Results` para enviar a los resultados a las entidades correspondientes. 
 
-A traves de la clase abstract `ClientLLM` se implementa la logica de dominio relacionada al flujo de las request, response y llamdo de tools del llm, encapsulando como metodo abstracto la logica correspondiente al envio de la request al llm, permitiendo evolucionar al sistema manteniendolo flexible con respecto a la imlpementacion concreta de un cliente llm. `ClientLLM` es una clase stateless para evitar la mutabilidad del objeto y el surgimiento de errores inesperados. Otros puntos a destacar del `ClientLLM` son:
-- La aplicación utiliza tool calling nativo del LLM, evitando el parsing manual de texto o JSON generado por el modelo. Esto permite ejecutar acciones de forma estructurada y segura, con validación explícita de los argumentos, reduciendo errores y mejorando la mantenibilidad del sistema.
-- El sistema separa claramente la intención detectada, la tool asociada y la lógica de ejecución. Esta separación reduce el acoplamiento, facilita la extensión del comportamiento del agente y permite agregar nuevas tools o intenciones sin afectar el flujo general de la aplicación. Aunque existe un acoplamiento implicito entre las estrucutras JSON solicitadas y recibidas por el `ClientLLM` y las `Tool` 
+A traves de la clase abstract `Client`LLM`` se implementa la logica de dominio relacionada al flujo de las request, response y llamdo de `tools` del `llm`, encapsulando como metodo abstracto la logica correspondiente al envio de la request al `llm`, permitiendo evolucionar al sistema manteniendolo flexible con respecto a la imlpementacion concreta de un cliente `llm`. `Client`LLM`` es una clase stateless para evitar la mutabilidad del objeto y el surgimiento de errores inesperados. Otros puntos a destacar del `Client`LLM`` son:
+- La aplicación utiliza tool calling nativo del `LLM`, evitando el parsing manual de texto o JSON generado por el modelo. Esto permite ejecutar acciones de forma estructurada y segura, con validación explícita de los argumentos, reduciendo errores y mejorando la mantenibilidad del sistema.
+- El sistema separa claramente la intención detectada, la tool asociada y la lógica de ejecución. Esta separación reduce el acoplamiento, facilita la extensión del comportamiento del agente y permite agregar nuevas `tools` o intenciones sin afectar el flujo general de la aplicación. Aunque existe un acoplamiento implicito entre las estrucutras JSON solicitadas y recibidas por el `Client`LLM`` y las `Tool` 
 
-La primera tool es `analyze_issues_complexity`, que permite analizar la complejidad de los issues de un repositorio de GitHub. Cuando el usuario solicita analizar problemas, el LLM invoca esta herramienta proporcionando tres parámetros: el chat_id para recuperar el token de autenticación de la sesión actual, el nombre de usuario u organización en GitHub (user), y el nombre del repositorio (repo). El sistema entonces se conecta a la API de GitHub, obtiene los issues del repositorio, extrae señales de complejidad basadas en la descripción y etiquetas, y evalúa cada issue utilizando heurísticas predefinidas para finalmente retornar el análisis al LLM, quien lo presenta al usuario en lenguaje natural.
+La primera tool es `analyze_issues_complexity`, que permite analizar la complejidad de los issues de un repositorio de GitHub. Cuando el usuario solicita analizar problemas, el `LLM` invoca esta herramienta proporcionando tres parámetros: el chat_id para recuperar el token de autenticación de la sesión actual, el nombre de usuario u organización en GitHub (user), y el nombre del repositorio (repo). El sistema entonces se conecta a la API de GitHub, obtiene los issues del repositorio, extrae señales de complejidad basadas en la descripción y etiquetas, y evalúa cada issue utilizando heurísticas predefinidas para finalmente retornar el análisis al `LLM`, quien lo presenta al usuario en lenguaje natural.
 
-La segunda tool es `persist_chat`, que permite guardar permanentemente una conversación en la base de datos. Los chats se almacenan inicialmente en memoria con un tiempo de vida de 30 minutos, pero esta herramienta permite que el usuario preserve conversaciones importantes antes de que expiren. Cuando se invoca, el sistema recupera el chat de memoria usando el `chat_id` proporcionado y guarda toda la conversación y sus mensajes en Supabase, retornando una confirmación de éxito al LLM.
+La segunda tool es `persist_chat`, que permite guardar permanentemente una conversación en la base de datos. Los chats se almacenan inicialmente en memoria con un tiempo de vida de 30 minutos, pero esta herramienta permite que el usuario preserve conversaciones importantes antes de que expiren. Cuando se invoca, el sistema recupera el chat de memoria usando el `chat_id` proporcionado y guarda toda la conversación y sus mensajes en Supabase, retornando una confirmación de éxito al `LLM`.
 
 ### Persistencia y Manejo de Chats
 
-Para la persistencia y el manejo de `Chat` no persistidos (dado que las conversaciones se persisten a traves de una tool, tras recibir la solicitud del usuario) se utiliza un `ChatContextRepository` en memoria para mantener el estado activo de los chats durante la sesión. Este repositorio encapsula el Chat junto con su `ChatContext` (por ejemplo, el token de autorización de GitHub), permitiendo que las tools accedan al contexto necesario sin depender directamente de la UI ni de las cookies. Además, facilita la gestión de ciclo de vida del chat (TTL, reutilización y limpieza).El `SupabaseRepository` se encarga exclusivamente de la persistencia y autenticación. Centraliza el acceso a la base de datos y a `Supabase Auth`, desacoplando la lógica de negocio del proveedor de almacenamiento. Esto permite persistir chats, recuperar historial y manejar usuarios autenticados sin mezclar responsabilidades con la capa de orquestación o las tools.
+Para la persistencia y el manejo de `Chat` no persistidos (dado que las conversaciones se persisten a traves de una tool, tras recibir la solicitud del usuario) se utiliza un `ChatContextRepository` en memoria para mantener el estado activo de los chats durante la sesión. Este repositorio encapsula el Chat junto con su `ChatContext` (por ejemplo, el token de autorización de GitHub), permitiendo que las `tools` accedan al contexto necesario sin depender directamente de la UI ni de las cookies. Además, facilita la gestión de ciclo de vida del chat (TTL, reutilización y limpieza).El `SupabaseRepository` se encarga exclusivamente de la persistencia y autenticación. Centraliza el acceso a la base de datos y a `Supabase Auth`, desacoplando la lógica de negocio del proveedor de almacenamiento. Esto permite persistir chats, recuperar historial y manejar usuarios autenticados sin mezclar responsabilidades con la capa de orquestación o las `tools`.
 
 ---
 
@@ -105,3 +105,15 @@ Para la persistencia y el manejo de `Chat` no persistidos (dado que las conversa
 
 ## Link al Deploy
 > https://issue-analyzer.vercel.app/
+
+# Issue Analyzer (Post refactor)
+## Cambios
+> Se eliminio la entidad `Agent`
+
+En un principio `Agent` nacio para `desacoplar` al `llm` de la implementación de las `tools`, buscnado evitar que se conozcan los unos a los otros actuando como mediador. Mas tarde me di cuenta de que no cumplia lo que esperaba, dado que existe un `acoplamiento implicito` entre las `tools` y el `llm` debido a que el segundo con y sin function calling nativo, conoce sus nombres y parametros, existiendo entonces una conexión inquebrantable entre dichos objetos.
+Para poder manejar tantos tipos parametros de tools distintos, el `Agent` debia tener en la firma de su metodo `args:unknown`. El resultado entonces fue que el llm se comunicaba con las tools a traves de strings que iban de un lado al otro, dificultando la validacion y normalización del información, y a su vez la mantenibilidad, complicando muchos cambios que hice en mi codigo.
+Mi solución en el refactor fue volver explicito el acoplamiento entre el llm y las tools, creando entidades que medien en su comunicacion, validando y parseando entradas y salidas, por lo tanto por cada tool existe su correspondiente `toolInvoker`, que `desacopla` al `llm` de cada implementación concreta de `tool`, pero vuelve `explicita` la relación entre ambas.
+
+> Se cambio el flujo del `ClientLLM` y se redefinieron los prompts
+
+Previamente, el `ClientLLM` unicamente podia determinar una intencion del usuario por request, lo cual en la practica empeora muchisimo la UX. Para ello reafine el prompt `FIND_USER_INTENTIONS` para que genere una respuesta estructurada, donde encadene las intenciones del usuario en el orden en que las solicito, y en base a eso, generar los llamados las tools correspondientes y nuevamente, encadenando sus resultados. Tambien para mejorar la calidad de las respuestas profundice la calidad de mis prompts definiendo con presición rol del llm, su responsabilidad exacta, restricciones duras y el formato de salida, sumado a ejemplos de few_shot learing y function calling nativo. Estas ultimas dos caracteristicas existian previo al refactor, solo que ahora fueron profundizadas. 

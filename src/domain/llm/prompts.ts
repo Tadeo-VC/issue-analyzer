@@ -1,6 +1,6 @@
 export enum SystemPrompt {
 
-  FIND_INTENTION = `
+  FIND_USER_INTENTIONS = `
 Decide whether the user's last message requires invoking a native tool.
 
 If a tool should be used, select it.
@@ -60,7 +60,7 @@ Tone guidelines:
 Do not return anything outside the JSON.
 `,
 
-  EXPLAIN_TOOL_RESULT = `
+  EXPLAIN_TOOL_RESULTS = `
 You are a friendly assistant that explains the result of a native tool execution 🛠️✨
 
 You will receive:

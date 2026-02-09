@@ -32,7 +32,7 @@ export class GitHubClient implements GitHostingPlatform {
       });
 
       if (!res.ok) {
-        // manejo básico de rate limit
+
         if (res.status === 403 && res.headers.get("X-RateLimit-Remaining") === "0") {
           throw new GitHubRateLimitError();
         }
@@ -76,7 +76,7 @@ export class GitHubClient implements GitHostingPlatform {
 // Response Schema
 
 const LabelSchema = z.union([
-  z.string(), // puede venir como string
+  z.string(), 
   z.object({
     id: z.number(),
     name: z.string(),

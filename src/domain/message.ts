@@ -1,6 +1,3 @@
-import { ResponseState } from "./responseState";
-import { MessageResponseNotFoundError } from "./errors";
-
 export class Message {
   private request: string;
   private response?: string;
@@ -31,3 +28,9 @@ export class Message {
     return this.response !== undefined;
   }
 }
+
+enum ResponseState {
+    IDLE,
+    SUCCESS,
+    ERROR,
+  }

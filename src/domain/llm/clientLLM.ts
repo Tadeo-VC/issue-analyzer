@@ -1,8 +1,10 @@
 import { Chat } from "../chat"
 import { SystemPrompt } from "./prompts";
 import z from "zod";
-import { MultiToolResponse, ToolInvoker, ToolResponse } from "../tool/toolInvoker";
+import { MultiToolResponse, ToolInvoker, ToolResponse } from "../tool/invokers/toolInvoker";
 import { CanonicalLLMMessage, Intention, LLMRole } from "./canonicalLlmMessage";
+import { PersistChatInvoker } from "../tool/invokers/persistChatInvoker";
+import { PersistChat } from "../tool/persistChat";
 export abstract class ClientLLM {
 
   async generateResponse(chat: Chat): Promise<string> {
@@ -52,19 +54,19 @@ export abstract class ClientLLM {
   }
   protected async generateToolResponse(toolCall: ToolCall, chat: Chat): Promise<ToolResponse> {
     
-    let handler: ToolInvoker;
+    let invoker: ToolInvoker;
     switch (toolCall.intention) {
       case Intention.ANALYZE_ISSUES_COMPLEXITY:
-        handler = new IssueComplexityAnalyzerHandler(toolCall.args, chat);
+        invoker = new IssueComplexityAnalyzerInvoker(toolCall.args, chat);
         break
       case Intention.PERSIST_CHAT:
-        handler = new PersistChatHandler(chat);
+        invoker = new PersistChatInvoker(chat, new PersistChat());
         break
       default: 
         throw new ClientLLMException(`Unsupported intention: ${toolCall.intention}`);
     }
     
-    return await handler.handle();
+    return await invoker.invoke();
   }
 
   protected abstract sendRequest(

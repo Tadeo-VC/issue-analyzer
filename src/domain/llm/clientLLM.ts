@@ -5,23 +5,14 @@ import { MultiToolResponse, ToolInvoker, ToolResponse } from "../tool/toolInvoke
 import { CanonicalLLMMessage, Intention, LLMRole } from "./canonicalLlmMessage";
 export abstract class ClientLLM {
 
-  async generateResponse(chat: Chat) {
+  async generateResponse(chat: Chat): Promise<string> {
 
     const findIntentionPrompt: CanonicalLLMMessage = this.buildPrompt(SystemPrompt.FIND_USER_INTENTIONS);
     const chatHistory: CanonicalLLMMessage[] = this.buildChatHistory(chat);
 
-    const llmResponse= await this.sendRequest([findIntentionPrompt, ...chatHistory]);
+    const llmResponse = await this.sendRequest([findIntentionPrompt, ...chatHistory]);
     
-    const zodLlmResponse = multiToolCallSchema.safeParse([llmResponse]);
-    if (!zodLlmResponse.success) {
-      throw new ClientLLMException(`Invalid LLM response: ${zodLlmResponse.error.message}`);
-    }
-
-    const jsonLlmResponse = zodLlmResponse.data;
-  
-    if (jsonLlmResponse.length === 0) {
-      throw new ClientLLMException("LLM response is empty");
-    }
+    const jsonLlmResponse = this.validateLLMResponse(llmResponse);
 
     if (jsonLlmResponse.length == 1 && jsonLlmResponse[0].intention === Intention.GENERAL_CHAT) {
       return jsonLlmResponse[0].args.response as string;
@@ -34,7 +25,7 @@ export abstract class ClientLLM {
 
     const finalResponse = await this.sendRequest([explainResultsPrompt, toolResultsMessages, ...chatHistory]);
 
-    return finalResponse;
+    return this.validateLLMResponse(finalResponse)[0].args.response as string;
   }
 
   protected async callTools(tools: MultiToolCall, chat: Chat): Promise<MultiToolResponse> {
@@ -82,6 +73,22 @@ export abstract class ClientLLM {
 
   protected buildPrompt(systemPrompt: SystemPrompt): CanonicalLLMMessage {
     return new CanonicalLLMMessage(LLMRole.SYSTEM, systemPrompt);
+  }
+
+  protected validateLLMResponse(response: unknown): MultiToolCall {
+    
+    const zodResponse = multiToolCallSchema.safeParse([response]);
+    if (!zodResponse.success) {
+      throw new ClientLLMException(`Invalid LLM response: ${zodResponse.error.message}`);
+    }
+
+    const jsonResponse = zodResponse.data;
+  
+    if (jsonResponse.length === 0) {
+      throw new ClientLLMException("LLM response is empty");
+    }
+
+    return jsonResponse;
   }
 
   protected buildChatHistory(chat: Chat): CanonicalLLMMessage[] {

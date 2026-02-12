@@ -64,3 +64,64 @@
   --ease-out: cubic-bezier(0, 0, 0.2, 1);
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+@theme {
+   /* ========== TYPOGRAPHY ========== */
+  --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-geist: 'Geist', sans-serif;
+  
+  /* ========== GRAY SCALE ========== */
+  --color-gray-100: hsl(0, 0%, 98%);
+  --color-gray-200: hsl(0, 0%, 96%);
+  --color-gray-300: hsl(0, 0%, 92%);
+  --color-gray-400: hsl(0, 0%, 85%);
+  --color-gray-500: hsl(0, 0%, 75%);
+  --color-gray-600: hsl(0, 0%, 65%);
+  --color-gray-700: hsl(0, 0%, 55%);
+  --color-gray-800: hsl(0, 0%, 45%);
+  --color-gray-900: hsl(0, 0%, 40%);
+  --color-gray-1000: hsl(0, 0%, 9%);
+  --color-gray-1100: hsl(0, 0%, 0%);
+  
+  /* ========== SEMANTIC TOKENS ========== */
+  --color-bg-primary: hsl(0, 0%, 100%);
+  --color-bg-surface: var(--color-gray-100);
+  --color-bg-surface-hover: var(--color-gray-200);
+  
+  --color-primary: var(--color-gray-1000);
+  --color-primary-hover: var(--color-gray-1100);
+  --color-primary-text: white;
+  
+  --color-text-primary: var(--color-gray-1000);
+  --color-text-secondary: var(--color-gray-900);
+  --color-text-muted: var(--color-gray-800);
+  --color-text-disabled: var(--color-gray-700);
+  
+  --color-border-default: var(--color-gray-400);
+  --color-border-hover: var(--color-gray-500);
+  --color-border-soft: var(--color-gray-300);
+  
+  --color-icon-secondary: var(--color-gray-600);
+  
+  /* ========== COMPONENTS ========== */
+  --radius-card: 6px;
+  --animate-card: blur-in 15s;
+  --shadow-button: 0 0 0 1px var(--color-gray-400);
+  
+  /* ========== SHADOWS ========== */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  
+  /* ========== ANIMATIONS ========== */
+  --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  
+  --transition-fast: 150ms;
+  --transition-base: 200ms;
+  --transition-slow: 300ms;
+}

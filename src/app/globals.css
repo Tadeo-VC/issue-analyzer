@@ -1,27 +1,66 @@
-/*@import "tailwindcss";
-
+@import 'tailwindcss';
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ========== TYPOGRAPHY ========== */
+  --font-family: 'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-style: normal;
+  --font-weight-range: 100 900;
+  --font-display: swap;
+  
+  /* ========== GRAY SCALE ========== */
+  --gray-100: hsl(0, 0%, 98%);
+  --gray-200: hsl(0, 0%, 96%);
+  --gray-300: hsl(0, 0%, 92%);
+  --gray-400: hsl(0, 0%, 85%);
+  --gray-500: hsl(0, 0%, 75%);
+  --gray-600: hsl(0, 0%, 65%);
+  --gray-700: hsl(0, 0%, 55%);
+  --gray-800: hsl(0, 0%, 45%);
+  --gray-900: hsl(0, 0%, 40%);
+  --gray-1000: hsl(0, 0%, 9%);
+  
+  /* ========== SEMANTIC TOKENS ========== */
+  /* Backgrounds */
+  --bg-primary: hsl(0, 0%, 100%);
+  --bg-surface: var(--gray-100);
+  --bg-surface-hover: var(--gray-200);
+  
+  /* Primary buttons */
+  --primary: var(--gray-1000);
+  --primary-hover: var(--gray-1100);
+  --primary-text: white;
+  
+  /* Texts */
+  --text-primary: var(--gray-1000);
+  --text-secondary: var(--gray-900);
+  --text-muted: var(--gray-800);
+  --text-disabled: var(--gray-700);
+  
+  /* Borders */
+  --border-default: var(--gray-400);
+  --border-hover: var(--gray-500);
+  --border-soft: var(--gray-300);
+  
+  /* Icons */
+  --icon-secondary: var(--gray-600);
+  
+  /* ========== COMPONENTS ========== */
+  --card-border-radius: 6px;
+  --card-animation: blur-in 15s;
+  --button-border: 0 0 0 1px var(--gray-400);
+  
+  /* ========== SHADOWS ========== */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  
+  /* ========== ANIMATIONS ========== */
+  --transition-fast: 150ms;
+  --transition-base: 200ms;
+  --transition-slow: 300ms;
+  --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
 }
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
-*/

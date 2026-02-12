@@ -125,3 +125,8 @@
   --transition-base: 200ms;
   --transition-slow: 300ms;
 }
+
+@keyframes blur-in {
+  0% { opacity: 0; filter: blur(10px); }  /* Inicio */
+  100% { opacity: 1; filter: blur(0); }    /* Final */
+}

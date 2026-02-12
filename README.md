@@ -117,3 +117,60 @@ Mi solución en el refactor fue volver explicito el acoplamiento entre el llm y 
 > Se cambio el flujo del `ClientLLM` y se redefinieron los prompts
 
 Previamente, el `ClientLLM` unicamente podia determinar una intencion del usuario por request, lo cual en la practica empeora muchisimo la UX. Para ello reafine el prompt `FIND_USER_INTENTIONS` para que genere una respuesta estructurada, donde encadene las intenciones del usuario en el orden en que las solicito, y en base a eso, generar los llamados las tools correspondientes y nuevamente, encadenando sus resultados. Tambien para mejorar la calidad de las respuestas profundice la calidad de mis prompts definiendo con presición rol del llm, su responsabilidad exacta, restricciones duras y el formato de salida, sumado a ejemplos de few_shot learing y function calling nativo. Estas ultimas dos caracteristicas existian previo al refactor, solo que ahora fueron profundizadas. 
+
+# Frontend
+
+## UI Design
+
+### Inspiración
+
+> Vercel
+
+| Rol | Variable Vercel | Valor HSL | Valor HEX | Traducción semántica |
+|-----|-----------------|-----------|-----------|---------------------|
+| **`bg-primary`** | `--ds-background-100` | `0, 0%, 100%` | `#FFFFFF` | Fondo principal (el lienzo) |
+| **`bg-surface`** | `--ds-gray-100` | `0, 0%, 98%` | `#FAFAFA` | Tarjetas, elevaciones sutiles |
+| **`bg-surface-hover`** | `--ds-gray-200` | `0, 0%, 96%` | `#F5F5F5` | Hover de tarjetas |
+| **`primary`** | `--ds-gray-1000` | `0, 0%, 9%` | `#171717` | **Botones PRINCIPALES** (CTA) |
+| **`primary-hover`** | `--ds-gray-1100` | `0, 0%, 0%` | `#000000` | Hover de botones |
+| **`text-primary`** | `--ds-gray-1000` | `0, 0%, 9%` | `#171717` | Títulos, texto más importante |
+| **`text-secondary`** | `--ds-gray-900` | `0, 0%, 40%` | `#666666` | Texto normal, párrafos |
+| **`text-muted`** | `--ds-gray-800` | `0, 0%, 45%` | `#737373` | Metadatos, fechas, texto despriorizado |
+| **`text-disabled`** | `--ds-gray-700` | `0, 0%, 55%` | `#8C8C8C` | Texto deshabilitado |
+| **`border-default`** | `--ds-gray-400` | `0, 0%, 85%` | `#D9D9D9` | Bordes de tarjetas |
+| **`border-hover`** | `--ds-gray-500` | `0, 0%, 75%` | `#BFBFBF` | Bordes en hover |
+
+
+| Variable | HSL | HEX | Uso |
+|----------|-----|-----|-----|
+| `--gray-100` | `0, 0%, 98%` | `#FAFAFA` | Surface base |
+| `--gray-200` | `0, 0%, 96%` | `#F5F5F5` | Surface hover |
+| `--gray-300` | `0, 0%, 92%` | `#EBEBEB` | Bordes suaves |
+| `--gray-400` | `0, 0%, 85%` | `#D9D9D9` | Bordes default |
+| `--gray-500` | `0, 0%, 75%` | `#BFBFBF` | Bordes hover / íconos |
+| `--gray-600` | `0, 0%, 65%` | `#A6A6A6` | Íconos secundarios |
+| `--gray-700` | `0, 0%, 55%` | `#8C8C8C` | Texto deshabilitado |
+| `--gray-800` | `0, 0%, 45%` | `#737373` | Texto muted |
+| `--gray-900` | `0, 0%, 40%` | `#666666` | Texto secundario |
+| `--gray-1000` | `0, 0%, 9%` | `#171717` | Texto primary / Botones primary |
+| `--gray-1100` | `0, 0%, 0%` | `#000000` | Hover de botones primary |
+
+| Propiedad | Valor |
+|-----------|-------|
+| **Font Family** | `Geist` |
+| **Font Style** | `normal` |
+| **Font Weight** | `100 900` |
+| **Font Display** | `swap` |
+
+| Componente | Propiedad | Valor |
+|------------|-----------|-------|
+| **Tarjetas** | Border radius | `6px` |
+| **Tarjetas** | Animación | `blur-in` (15s) |
+| **Botones** | Box shadow | `0 0 0 1px var(--ds-gray-400)` |
+| **Botones primary** | Background | `var(--ds-gray-1000)` |
+| **Botones primary** | Color texto | `white` |
+
+1. **Sin color de acento** → Vercel usa negro como primary. Personalidad: seriedad, minimalismo, confianza.
+2. **Jerarquía por contraste** → Texto más oscuro = más importante.
+3. **Superficies sutiles** → Diferencia de 2% entre fondo y tarjetas.
+4. **Bordes en lugar de sombras** → Usan `box-shadow` de 1px como borde.

@@ -127,6 +127,16 @@
 }
 
 @keyframes blur-in {
-  0% { opacity: 0; filter: blur(10px); }  /* Inicio */
-  100% { opacity: 1; filter: blur(0); }    /* Final */
+  0% { opacity: 0; filter: blur(10px); }  
+  100% { opacity: 1; filter: blur(0); }    
+}
+
+@layer base {
+  body {
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-secondary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
